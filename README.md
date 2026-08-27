@@ -171,7 +171,7 @@ The scripts should be executed in the following order.
 Script:
 
 
-1_Data_exploration.Rmd
+`1_Data_exploration.Rmd`
 
 
 This script imports the microsatellite dataset and performs exploratory analyses.
@@ -186,7 +186,7 @@ Analyses include:
 
 The resulting R outputs are saved in:
 
-Results_of_data_exploration/
+`Results_of_data_exploration/`
 
 ---
 
@@ -195,7 +195,7 @@ Results_of_data_exploration/
 Script:
 
 
-2_Preparation_for_Structure.Rmd
+`2_Preparation_for_Structure.Rmd`
 
 
 This script prepares datasets for STRUCTURE analyses.
@@ -212,7 +212,7 @@ The script includes:
 The resulting STRUCTURE input files are saved in:
 
 
-Data_for_Structure/
+`Data_for_Structure/`
 
 
 Each analysis has its own folder containing the required input files for STRUCTURE.
@@ -224,7 +224,7 @@ Each analysis has its own folder containing the required input files for STRUCTU
 Script:
 
 
-3_Joblists_for_Structure.Rmd
+`3_Joblists_for_Structure.Rmd`
 
 
 This script generates joblist files required for running STRUCTURE analyses using 
@@ -238,7 +238,7 @@ The joblists specify:
 - K values,
 - analysis parameters.
 
-By default, the joblists are written to Data_for_Structure/Joblists. Before running 
+By default, the joblists are written to `Data_for_Structure/Joblists`. Before running 
 STRUCTURE, the relevant joblist must be copied or moved to the corresponding 
 analysis directory containing the STRUCTURE input files. The default can also be
 changed so that the joblists are saved in the preferred folder.
@@ -249,7 +249,7 @@ changed so that the joblists are saved in the preferred folder.
 
 Script:
 
-4_Run_Parallel_Structure.Rmd
+`4_Run_Parallel_Structure.Rmd`
 
 
 This script runs STRUCTURE analyses using the `ParallelStructure` R package.
@@ -268,7 +268,7 @@ with their own data.
 STRUCTURE output files are saved in:
 
 
-ParallelStructure_Results/
+`ParallelStructure_Results/`
 
 
 ---
@@ -278,7 +278,7 @@ ParallelStructure_Results/
 Script:
 
 
-5_Analyses_after_Structure.Rmd
+`5_Analyses_after_Structure.Rmd`
 
 Before running this script, STRUCTURE replicate results must be processed using 
 CLUMPAK (e.g. I used online tool StructureSelector, which can also run CLUMPAK
@@ -301,7 +301,7 @@ thresholds of Q_Dog value,
 The resulting R outputs are saved in:
 
 
-R_results/
+`R_results/`
 
 
 It contains outputs from the downstream R analyses and is located in the main 
@@ -314,7 +314,7 @@ directory of each analysis, alongside the simulation replicate folders.
 The folder:
 
 
-ParallelStructure_Results/
+`ParallelStructure_Results/`
 
 
 contains the results of STRUCTURE runs, CLUMPAK analyses, and associated outputs.
@@ -339,13 +339,9 @@ Each replicate folder contains:
 
 ```text
 1c_NDinaric_empirical_Sim_dog_1/
-  │  
   ├── output files of 2_preparation_for_Structure.Rmd (1c_NDinaric_empirical_Sim_dog_1.txt, 1c_NDinaric_empirical_Sim_dog_1_POP.txt, 1c_NDinaric_empirical_Sim_dog_1_PopMap.txt)  
-  │  
   ├── output files of 3_joblists_for_Structure.Rmd (joblist_1c_1.txt)  
-  │  
   ├── output files of ParallelStructure  
-  │  
   └── Clumpak_results/ 
 ```  
   
