@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+
+message: "If you use the data, code, or results from this repository, please cite 
+the associated publication and the archived Zenodo dataset."
+
+title: >
+  Caveats and limits of microsatellite-based hybrid detection in structured
+  populations: example from wolf-dog hybridisation in the Northern Dinaric mountains
+
+type: dataset
+
+authors:
+  - family-names: "Pavlovič"
+    given-names: "Eva"
+  - family-names: "Birkenhain"
+    given-names: "Caroline Sophie"
+  - family-names: "Boljte"
+    given-names: "Barbara"
+  - family-names: "Ćirović"
+    given-names: "Duško"
+  - family-names: "De Barba"
+    given-names: "Marta"
+  - family-names: "Djan"
+    given-names: "Mihajla"
+  - family-names: "Hristov"
+    given-names: "Hristo"
+  - family-names: "Iosif"
+    given-names: "Ruben"
+  - family-names: "Konec"
+    given-names: "Marjeta"
+  - family-names: "Kusak"
+    given-names: "Josip"
+  - family-names: "Marucco"
+    given-names: "Francesca"
+  - family-names: "Nowak"
+    given-names: "Carsten"
+  - family-names: "Pazhenkova"
+    given-names: "Elena"
+  - family-names: "Promberger–Fürpass"
+    given-names: "Barbara"
+  - family-names: "Stronen"
+    given-names: "Astrid Vik"
+  - family-names: "Šnjegota"
+    given-names: "Dragana"
+  - family-names: "Tsingarska"
+    given-names: "Elena"
+  - family-names: "Skrbinšek"
+    given-names: "Tomaž"
+
+date-released: "2026-08-27"

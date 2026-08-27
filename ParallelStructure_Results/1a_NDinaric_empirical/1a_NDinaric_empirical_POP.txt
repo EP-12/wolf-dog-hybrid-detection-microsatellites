@@ -1,0 +1,6 @@
+1 Dog
+2 F1
+3 BC1w
+4 BC2w
+5 W-Slovenia
+6 W-Croatia

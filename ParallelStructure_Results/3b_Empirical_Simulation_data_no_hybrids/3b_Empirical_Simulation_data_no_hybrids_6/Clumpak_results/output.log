@@ -1,0 +1,68 @@
+Wed Jun 24 17:49:38 2026: Job 1782294575 started running.
+Wed Jun 24 17:49:38 2026: Job Parameters:
+Wed Jun 24 17:49:38 2026: Input file: 1782294575.zip
+Wed Jun 24 17:49:38 2026: Input type: STRUCTURE
+Wed Jun 24 17:49:38 2026: Labels file: 1782294575.lab
+Wed Jun 24 17:49:38 2026: CLUMPP repeats: 2000
+Wed Jun 24 17:49:38 2026: CLUMPP search method: LargeKGreedy 
+Wed Jun 24 17:49:38 2026: MCL cluster size threshold: 0.1 (default)
+Wed Jun 24 17:49:38 2026: Extracting file: "1782294575.zip".
+Wed Jun 24 17:49:38 2026: Sorting input files by K
+Wed Jun 24 17:49:38 2026: Working on K=4
+Wed Jun 24 17:49:38 2026: Executing CLUMPP for K=4.
+Wed Jun 24 17:49:44 2026: Clustering K=4 with mcl.
+Wed Jun 24 17:49:44 2026: cutoff used: 0.62
+Wed Jun 24 17:49:44 2026: Executing CLUMPP for major cluster.
+Wed Jun 24 17:49:46 2026: Calculating major cluster LnProb mean and standard deviation.
+Wed Jun 24 17:49:46 2026: LnProb mean: -144776.2
+Wed Jun 24 17:49:46 2026: LnProb standard deviation: 0.0999999999912689
+Wed Jun 24 17:49:46 2026: Executing CLUMPP for minor clusters.
+Wed Jun 24 17:49:46 2026: Calculating MinorCluster1 LnProb mean and standard deviation.
+Wed Jun 24 17:49:46 2026: LnProb mean: -145306.15
+Wed Jun 24 17:49:46 2026: LnProb standard deviation: 0.212132034347732
+Wed Jun 24 17:49:46 2026: Working on K=5
+Wed Jun 24 17:49:47 2026: Executing CLUMPP for K=5.
+Wed Jun 24 17:49:58 2026: Clustering K=5 with mcl.
+Wed Jun 24 17:49:58 2026: cutoff used: 0.50
+Wed Jun 24 17:49:58 2026: Executing CLUMPP for major cluster.
+Wed Jun 24 17:50:11 2026: Calculating major cluster LnProb mean and standard deviation.
+Wed Jun 24 17:50:11 2026: LnProb mean: -139565.8
+Wed Jun 24 17:50:11 2026: LnProb standard deviation: 0.496655480859941
+Wed Jun 24 17:50:11 2026: Executing CLUMPP for minor clusters.
+Wed Jun 24 17:50:12 2026: Calculating MinorCluster1 LnProb mean and standard deviation.
+Wed Jun 24 17:50:12 2026: LnProb mean: -143782
+Wed Jun 24 17:50:12 2026: LnProb standard deviation: 0
+Wed Jun 24 17:50:12 2026: Working on K=6
+Wed Jun 24 17:50:13 2026: Executing CLUMPP for K=6.
+Wed Jun 24 17:50:42 2026: Clustering K=6 with mcl.
+Wed Jun 24 17:50:42 2026: no cutoff was used
+Wed Jun 24 17:50:42 2026: Executing CLUMPP for major cluster.
+Wed Jun 24 17:51:11 2026: Calculating major cluster LnProb mean and standard deviation.
+Wed Jun 24 17:51:11 2026: LnProb mean: -136194.92
+Wed Jun 24 17:51:11 2026: LnProb standard deviation: 0.861394218698849
+Wed Jun 24 17:51:11 2026: Working on K=7
+Wed Jun 24 17:51:11 2026: Executing CLUMPP for K=7.
+Wed Jun 24 17:51:50 2026: Clustering K=7 with mcl.
+Wed Jun 24 17:51:50 2026: cutoff used: 0.61
+Wed Jun 24 17:51:50 2026: Executing CLUMPP for major cluster.
+Wed Jun 24 17:52:28 2026: Calculating major cluster LnProb mean and standard deviation.
+Wed Jun 24 17:52:28 2026: LnProb mean: -135294.82
+Wed Jun 24 17:52:28 2026: LnProb standard deviation: 26.4453587610376
+Wed Jun 24 17:52:28 2026: Ordering clusters by size for K=4
+Wed Jun 24 17:52:29 2026: Calling distruct for K=4.MajorCluster
+Wed Jun 24 17:52:30 2026: Calculating best Average Distance between K=4 and K=5..
+Wed Jun 24 17:52:34 2026: Calling distruct for K=5.MajorCluster
+Wed Jun 24 17:52:36 2026: Calculating best Average Distance between K=5 and K=6..
+Wed Jun 24 17:53:07 2026: Calling distruct for K=6.MajorCluster
+Wed Jun 24 17:53:08 2026: Calculating best Average Distance between K=6 and K=7..
+Wed Jun 24 17:57:43 2026: Calling distruct for K=7.MajorCluster
+Wed Jun 24 17:57:45 2026: Calculating best Average Distance between large cluster and K=4.MinorCluster1..
+Wed Jun 24 17:57:46 2026: Calling distruct for K=4.MinorCluster1
+Wed Jun 24 17:57:47 2026: Calculating best Average Distance between large cluster and K=5.MinorCluster1..
+Wed Jun 24 17:57:52 2026: Calling distruct for K=5.MinorCluster1
+Wed Jun 24 17:57:54 2026: Creating job summary PDF
+Wed Jun 24 17:57:54 2026: Creating job summary PDF for K=4
+Wed Jun 24 17:57:54 2026: Creating job summary PDF for K=5
+Wed Jun 24 17:57:54 2026: Creating job summary PDF for K=6
+Wed Jun 24 17:57:54 2026: Creating job summary PDF for K=7
+Wed Jun 24 17:57:54 2026: Creating job zip file

@@ -1,0 +1,9 @@
+1 Dog
+2 Sim-dog
+3 Sim-BC2d_ITA
+4 Sim-BC1d_ITA
+5 Sim-F1_ITA
+6 Sim-BC1w_ITA
+7 Sim-BC2w_ITA
+8 W-Italy
+9 Sim-W-Italy

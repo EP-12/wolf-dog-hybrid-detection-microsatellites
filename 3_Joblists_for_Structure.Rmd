@@ -1,0 +1,101 @@
+Making Joblist files for ParallelStructure
+
+```{r}
+## Function to generate ParallelStructure joblist file
+make_joblist <- function(nPop,
+                         Kmin,
+                         Kmax,
+                         nRep,
+                         burnin,
+                         mcmc,
+                         jobPrefix = "A",
+                         outFile = "joblist.txt",
+                         outDir = "Data_for_Structure/Joblists") {
+  
+  # prevent scientific notation
+  options(scipen = 999)
+  
+  # make sure output folder exists
+  if (!dir.exists(outDir)) {
+    dir.create(outDir, recursive = TRUE)
+  }
+  
+  # Vector of populations (1..nPop)
+  popVec <- paste(1:nPop, collapse = ",")
+  
+  # Empty list to hold jobs
+  jobs <- list()
+  
+  jobID <- 1
+  
+  for (K in Kmin:Kmax) {
+    for (rep in 1:nRep) {
+      jobs[[jobID]] <- data.frame(
+        Job    = paste0(jobPrefix, jobID),
+        Pop    = popVec,
+        K      = K,
+        burnin = as.integer(burnin),  # keep as plain integer
+        MCMC   = as.integer(mcmc),
+        stringsAsFactors = FALSE
+      )
+      jobID <- jobID + 1
+    }
+  }
+  
+  # Bind into one dataframe
+  jobDF <- do.call(rbind, jobs)
+  
+  # Full output path
+  outPath <- file.path(outDir, outFile)
+  
+  # Write to file WITHOUT column names
+  write.table(jobDF,
+              file = outPath,
+              sep = "\t",
+              quote = FALSE,
+              row.names = FALSE,
+              col.names = FALSE)
+  
+  cat("Joblist written to:", outPath, "\n")
+}
+```
+
+
+Examples
+1. Making one joblist file for analyses without simulation replicates (1a, 1b, 3a)
+```{r}
+## Example usage for 1a:
+make_joblist(
+  nPop     = 6,
+  Kmin     = 1,
+  Kmax     = 3,
+  nRep     = 5,
+  burnin   = 300000,
+  mcmc     = 3000000,
+  jobPrefix= "A",
+  outFile  = "joblist_1a.txt",
+  outDir   = "Data_for_Structure/Joblists" #Move file to correct folders for the STRUCTURE analyses.
+)
+
+
+```
+
+
+2. Make multiple joblists for ParallelStructure for runs with simulation replicates (1c, 2ai, 2aii, 2bi, 2bii, 3b, 4a)
+```{r}
+## Example usage for 4a:
+
+for (i in 1:10) {
+  make_joblist(
+    nPop      = 33,
+    Kmin      = 4,
+    Kmax      = 7,
+    nRep      = 5,
+    burnin    = 300000,
+    mcmc      = 3000000,
+    jobPrefix = paste0("H", i, "_"),
+    outFile   = paste0("joblist_4_", i, ".txt"),
+    outDir    = "Data_for_Structure/Joblists" #Move files to correct folders for the STRUCTURE analyses.
+  )
+}
+```

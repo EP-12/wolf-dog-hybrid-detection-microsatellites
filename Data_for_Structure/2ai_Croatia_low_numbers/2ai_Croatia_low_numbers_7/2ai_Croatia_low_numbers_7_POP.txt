@@ -1,0 +1,10 @@
+1 Dog
+2 Sim-BC2d_CRO
+3 Sim-BC1d_CRO
+4 F1
+5 Sim-F1_CRO
+6 BC1w
+7 Sim-BC1w_CRO
+8 BC2w
+9 Sim-BC2w_CRO
+10 W-Croatia

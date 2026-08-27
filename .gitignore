@@ -1,0 +1,13 @@
+# RStudio project files
+.Rproj.user/
+
+# R history and workspace
+.Rhistory
+.RData
+.Ruserdata
+
+# OS-specific files
+Thumbs.db
+
+#Temporary files
+~$*.xlsx

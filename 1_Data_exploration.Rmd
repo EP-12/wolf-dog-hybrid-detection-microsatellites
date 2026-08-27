@@ -1,0 +1,807 @@
+1. Importing libraries, functions and samples
+```{r setup}
+library(readxl)
+library(tidyverse)
+library(openxlsx)
+library(adegenet)
+library(pegas)
+
+```
+
+```{r}
+# Function re-formats genind object into a convenient dataframe w/ diversity indices for each locus for each population
+popSummLoc = function(genotypes, B = 100000){
+  
+
+  Population = NULL
+  Locus = NULL
+  N=NULL
+  He = NULL
+  Ho = NULL
+  pHWE = NULL
+  A = NULL
+  
+  bypop=seppop(genotypes, drop=TRUE)
+  
+  for(i in 1:length(bypop)){
+    summ=summary(bypop[[i]], verbose=FALSE)
+    NLoc = length(summ$loc.n.all)
+    Population = c(Population, rep(levels(pop(bypop[[i]])),NLoc))
+    Locus = c(Locus, locNames(bypop[[i]]))
+    
+    He = c(He, summ$Hexp)
+    Ho = c(Ho, summ$Hobs)
+    A = c(A, summ$loc.n.all)
+    
+    HWx = hw.test(bypop[[i]], B = B)  # using a fixed number of Monte Carlo replicates
+    pHWE = rbind(pHWE, HWx)
+
+  }
+  return(cbind(data.frame(Population, Locus, He, Ho, A), as.data.frame(pHWE)))
+  
+}
+```
+
+
+```{r}
+raw_data_all = read_xlsx("Data/Sample_data.xlsx", sheet = "Samples_data")
+```
+
+
+
+
+2. Create genind object with 20 microsatelite markers
+
+```{r}
+gendata_PCA <-  df2genind(raw_data_all[c("Cl147",	"Cl233",	"Cl264",	"Cl274",	"Cl285",	"Cl291",	"Cl308",	"Cl330",	"Cl344","Cl366",	"Cl375",	"Cl408",	"Cl507",	"Cl527",	"Cl380","Lup02",	"Lup13",	"Lup20",	"Lup21",	"Lup23")], sep = " ", NA.char = "-9 -9")
+gendata_PCA@other <-  raw_data_all[,1:10]
+indNames(gendata_PCA) <- raw_data_all$SampleID
+pop(gendata_PCA) <-  raw_data_all$Classified_PCA
+unique(pop(gendata_PCA))
+```
+
+3. Different explorations with Principal component analysis (PCA)
+
+3.1 All samples
+
+a) All samples
+```{r}
+x.pca <- dudi.pca(tab(gendata_PCA, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_PCA), col = hybridpal()(16))
+
+
+```
+b) Only dog and wolf samples (no hybrids)
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog", "W-Slovenia", "W-Croatia", "W-BIH", "W-Serbia", "W-Kosovo", "W-Montenegro", "W-N.Macedonia", "W-Bulgaria", "W-Italy", "W-Germany", "W-Romania")]
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(12))
+
+```
+We see that with PCA we cannot  distinguish well between different (sub)populations. Because of this, for our analyses PCA is not useful to look at all the samples together. We will try comparing samples from only few or two (sub)populations.
+
+3.2. Comparison of different (sub)populations
+
+#3.2.1) Different explorations with dogs, hybrids, Slovenian and Croatian samples
+
+With hybrid samples
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog", "F1","BC1w", "BC2w", "W-Slovenia", "W-Croatia")]
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(11))
+
+```
+Without hybrid samples
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog",  "W-Slovenia", "W-Croatia")] 
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(11))
+
+```
+We see that some samples that have been assigned as wolves with SNP analyses, still point to dogs.
+
+#3.2.2. Exploration with only Dinaric and Balkan samples
+
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog", "W-Slovenia", "W-Croatia", "W-BIH", "W-Serbia", "W-Kosovo", "W-Montenegro", "W-N.Macedonia", "W-Bulgaria")]
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(10))
+
+```
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog", "W-Slovenia", "W-Croatia", "W-N.Macedonia", "W-Bulgaria")]
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(5))
+
+```
+A gradual cline between North Dinaric samples and South Balkan samples can bee seen.
+
+#3.2.3) Exploration of dogs and samples from BIH, Srbia, Kosovo and Montenegro  - countries that showed mixed genes in preliminary STRUCTURE analyses from North Dinaric subpopulation (Slovenia, Croatia) and South Balkan subpopulation (North Macedonia, Bulgaria).
+
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog", "W-BIH", "W-Serbia", "W-Kosovo", "W-Montenegro")]
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(5))
+```
+Samples from BIH, Serbia, Kosovo and Montenegro cluster together and separately from dogs. Because of this we combined them together as "W-Middle_Balkan" samples in STRUCTURE analyses. 
+
+
+
+#3.2.4) Dogs and other wolf samples
+
+Italian samples
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog",  "W-Italy")]
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(2))
+```
+German samples
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog",  "W-Germany")]
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(2))
+```
+Romanian samples
+```{r}
+gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog",  "W-Romania")]
+
+x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(2))
+```
+
+
+4. Looking at Expected vs. Observed heterozygosity
+
+4.1 Preparing data
+#Combining BIH, Serbia, Kosovo and Montenegro together for analyses
+```{r}
+gendata_combined <- gendata_PCA
+
+# Convert pop to character to allow new value assignment
+pops <- as.character(pop(gendata_combined))
+
+# Replace BIH, Serbia, Kosovo and Montenegro with "W-Middle Balkan"
+pops[pops %in% c("W-BIH", "W-Serbia", "W-Kosovo", "W-Montenegro")] <- "W-Middle Balkan"
+
+# Reassign and re-factor
+pop(gendata_combined) <- as.factor(pops)
+
+# Check population composition
+table(pop(gendata_combined))
+levels(pop(gendata_combined))
+```
+
+
+#Removing the hybrids
+```{r}
+hybrid_classes <- c("F1", "BC1w", "BC2w")
+gendata_combined_H_removed <- gendata_combined[!pop(gendata_combined) %in% hybrid_classes, ]
+gendata_combined_H_removed@other <- gendata_combined@other[indNames(gendata_combined), ]
+
+# Check
+table(pop(gendata_combined_H_removed))
+levels(pop(gendata_combined_H_removed))
+```
+
+
+
+
+4.2 Calculate Ho and He statistics for every country for each locus and plot the data
+```{r}
+#Calculate Ho and He statistics for every population for each locus
+set.seed(123)
+Locus_statistic <- popSummLoc(gendata_combined_H_removed)
+
+```
+
+
+```{r}
+#Ploting for all countries separate without correction
+
+# Create a new column for outlier flag
+Locus_statistic <- Locus_statistic %>%
+  mutate(HWE_diff = abs(Ho - He),
+         is_outlier = HWE_diff > 0.1) #Leniant outliers - highlighting clear outliers
+
+# Plot, labeling only outliers
+ggplot(Locus_statistic, aes(Ho, He, col = Locus)) +
+  geom_point() +
+  geom_text(data = filter(Locus_statistic, is_outlier),
+            aes(label = Locus),
+            vjust = -0.5, hjust = 0.5,
+            size = 3, show.legend = FALSE) +
+  facet_grid(Population ~ .) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +
+  scale_x_continuous(limits = c(0, 1)) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(x = "Observed heterozygosity (Ho)", y = "Expected heterozygosity (He)")
+
+```
+4.3 Correcting the results 
+We applied the Benjamini-Hochberg correction to control the False Discovery Rate (FDR). This adjustment prevents excessive false positives arising from multiple testing while maintaining higher statistical power. It ensures that the identified genetic variants represent true biological signals rather than statistical noise.
+
+```{r}
+Locus_statistic_corrected <- Locus_statistic %>%
+  mutate(
+    BH = p.adjust(Pr.exact, method = "BH") # correction with Benjamini-Hochberg (BH) procedure
+  )
+
+```
+
+
+```{r}
+#Corrected with BH
+Corrected_BH <- Locus_statistic_corrected %>%
+  mutate(is_significant = BH < 0.05)
+
+HWB_BH_plot <- ggplot(Corrected_BH, aes(Ho, He, col = Locus)) +
+  geom_point() +
+  geom_text(data = filter(Corrected_BH, is_significant),
+            aes(label = Locus),
+            vjust = -0.5, hjust = 0.5,
+            size = 3, show.legend = FALSE) +
+  facet_grid(Population ~ .) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +
+  scale_x_continuous(limits = c(0, 1)) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(x = "Observed heterozygosity (Ho)", y = "Expected heterozygosity (He)")
+
+HWB_BH_plot
+
+ggsave("Results_of_data_exploration/HWB_BH_plot_20MS.png", plot = HWB_BH_plot, width = 10, height = 10, dpi = 300)
+```
+
+5. Finding dog and wolf private alleles
+
+5.1 Define populations and create datasets
+
+```{r}
+# =====================================================
+# Define true wolf populations
+# =====================================================
+
+true_wolves <- c(
+  "W-Slovenia",
+  "W-Croatia",
+  "W-Middle Balkan",
+  "W-N.Macedonia",
+  "W-Bulgaria",
+  "W-Italy",
+  "W-Germany",
+  "W-Romania"
+)
+
+
+# =====================================================
+# Create Dog + true wolf dataset
+# =====================================================
+
+g_dog_wolves <- gendata_combined[
+  pop(gendata_combined) %in% c("Dog", true_wolves)
+]
+
+# Check populations included
+table(pop(g_dog_wolves))
+
+
+# =====================================================
+# Create hybrid dataset
+# =====================================================
+
+hybrids <- c(
+  "F1",
+  "BC1w",
+  "BC2w"
+)
+
+g_hybrids <- gendata_combined[
+  pop(gendata_combined) %in% hybrids
+]
+
+# Check hybrid classes
+table(pop(g_hybrids))
+```
+
+5.2 Identify dog- and wolf-private alleles
+
+Private alleles are defined as alleles present in at least one individual of one group and absent from the other group.
+
+```{r}
+# =====================================================
+# Allele presence table: Dog + true wolves
+# =====================================================
+
+all_tab <- tab(
+  g_dog_wolves,
+  freq = TRUE,
+  NA.method = "zero"
+)
+
+dog_inds <- pop(g_dog_wolves) == "Dog"
+
+wolf_inds <- pop(g_dog_wolves) %in% true_wolves
+
+
+# Number of individuals carrying each allele
+# (> 0 means the allele is present in that individual)
+
+dog_presence <- colSums(
+  all_tab[dog_inds, ] > 0
+)
+
+wolf_presence <- colSums(
+  all_tab[wolf_inds, ] > 0
+)
+
+
+# =====================================================
+# Dog-private alleles
+# =====================================================
+
+dog_private_alleles <- names(
+  dog_presence[
+    dog_presence > 0 &
+    wolf_presence == 0
+  ]
+)
+
+
+# =====================================================
+# True wolf-private alleles
+# =====================================================
+
+wolf_private_alleles <- names(
+  wolf_presence[
+    wolf_presence > 0 &
+    dog_presence == 0
+  ]
+)
+
+
+# Results
+dog_private_alleles
+length(dog_private_alleles)
+
+wolf_private_alleles
+length(wolf_private_alleles)
+```
+
+5.3 Count individuals carrying each private allele
+
+```{r}
+# =====================================================
+# Dog allele counts
+# =====================================================
+
+g_dogs <- gendata_combined[
+  pop(gendata_combined) == "Dog"
+]
+
+dog_tab <- tab(
+  g_dogs,
+  freq = TRUE,
+  NA.method = "zero"
+)
+
+dog_counts <- colSums(
+  dog_tab[, dog_private_alleles, drop = FALSE] > 0
+)
+
+
+# =====================================================
+# Wolf allele counts
+# =====================================================
+
+g_wolves <- gendata_combined[
+  pop(gendata_combined) %in% true_wolves
+]
+
+wolf_tab <- tab(
+  g_wolves,
+  freq = TRUE,
+  NA.method = "zero"
+)
+
+wolf_counts <- colSums(
+  wolf_tab[, wolf_private_alleles, drop = FALSE] > 0
+)
+
+
+# =====================================================
+# Identify private alleles present in only ONE
+# individual
+# =====================================================
+
+dog_private_once <- names(
+  dog_counts[
+    dog_counts == 1
+  ]
+)
+
+wolf_private_once <- names(
+  wolf_counts[
+    wolf_counts == 1
+  ]
+)
+
+
+# Check numbers
+length(dog_private_once)
+length(wolf_private_once)
+```
+
+5.4 Identify dog-private alleles carried by hybrids
+
+```{r}
+# =====================================================
+# Allele table for hybrids
+# =====================================================
+
+hyb_tab <- tab(
+  g_hybrids,
+  freq = TRUE,
+  NA.method = "zero"
+)
+
+
+# =====================================================
+# Number of hybrids carrying each dog-private allele
+# =====================================================
+
+hyb_counts <- colSums(
+  hyb_tab[, dog_private_alleles, drop = FALSE] > 0
+)
+```
+
+Exact dog-private alleles detected in each hybrid
+
+```{r}
+# =====================================================
+# Exact dog-private alleles detected in each hybrid
+# =====================================================
+
+hybrid_private_exact <- lapply(
+  seq_len(nInd(g_hybrids)),
+  function(i) {
+    
+    ind_gt <- hyb_tab[i, ]
+    
+    found <- names(ind_gt)[
+      names(ind_gt) %in% dog_private_alleles &
+      ind_gt > 0
+    ]
+    
+    tibble(
+      SampleID = indNames(g_hybrids)[i],
+      Pop = as.character(pop(g_hybrids)[i]),
+      Dog_private_alleles = if (
+        length(found) == 0
+      ) {
+        NA_character_
+      } else {
+        paste(found, collapse = ";")
+      }
+    )
+  }
+) %>%
+  bind_rows()
+
+
+hybrid_private_exact
+```
+
+
+
+5.5 Create per-allele summary information
+
+```{r}
+# =====================================================
+# DOG PRIVATE ALLELE TABLE
+# =====================================================
+
+dog_private_table <- tibble(
+  Allele = dog_private_alleles,
+  N_Dogs = dog_counts[dog_private_alleles],
+  N_Hybrids = hyb_counts[dog_private_alleles],
+  Present_once_in_dog = dog_private_alleles %in% dog_private_once
+)
+
+
+# =====================================================
+# WOLF PRIVATE ALLELE TABLE
+# =====================================================
+
+wolf_private_table <- tibble(
+  Allele = wolf_private_alleles,
+  N_Wolves = wolf_counts[wolf_private_alleles],
+  Present_once_in_wolf = wolf_private_alleles %in% wolf_private_once
+)
+
+
+# Inspect
+dog_private_table
+wolf_private_table
+```
+
+5.6 Create locus-level summaries
+
+```{r}
+# =====================================================
+# DOG PRIVATE ALLELES — LOCUS SUMMARY
+# =====================================================
+
+dog_locus <- dog_private_table %>%
+  separate(
+    Allele,
+    into = c("Locus", "AlleleSize"),
+    sep = "\\.",
+    remove = TRUE
+  ) %>%
+  group_by(Locus) %>%
+  summarise(
+    Dog_private_n = n(),
+    Dog_private_once_n = sum(Present_once_in_dog),
+    Max_N_Dogs = max(N_Dogs),
+    .groups = "drop"
+  )
+
+
+# =====================================================
+# WOLF PRIVATE ALLELES — LOCUS SUMMARY
+# =====================================================
+
+wolf_locus <- wolf_private_table %>%
+  separate(
+    Allele,
+    into = c("Locus", "AlleleSize"),
+    sep = "\\.",
+    remove = TRUE
+  ) %>%
+  group_by(Locus) %>%
+  summarise(
+    Wolf_private_n = n(),
+    Wolf_private_once_n = sum(Present_once_in_wolf),
+    Max_Wolves_private = max(N_Wolves),
+    .groups = "drop"
+  )
+
+
+# =====================================================
+# DOG-PRIVATE ALLELES DETECTED IN HYBRIDS
+# =====================================================
+
+hybrid_locus <- dog_private_table %>%
+  separate(
+    Allele,
+    into = c("Locus", "AlleleSize"),
+    sep = "\\.",
+    remove = TRUE
+  ) %>%
+  group_by(Locus) %>%
+  summarise(
+    N_detected_in_hybrids = sum(N_Hybrids > 0),
+    Max_N_Hybrids = max(N_Hybrids),
+    .groups = "drop"
+  )
+```
+
+
+5.7 Create the final locus-level table
+
+This includes **all 20 loci**, including loci with zero private alleles.
+
+```{r}
+# =====================================================
+# All loci
+# =====================================================
+
+all_loci <- locNames(gendata_combined)
+
+
+# =====================================================
+# FINAL SUMMARY TABLE
+# =====================================================
+
+private_alleles_locus_summary <- tibble(
+  Locus = all_loci
+) %>%
+  
+  left_join(
+    dog_locus,
+    by = "Locus"
+  ) %>%
+  
+  left_join(
+    wolf_locus,
+    by = "Locus"
+  ) %>%
+  
+  left_join(
+    hybrid_locus,
+    by = "Locus"
+  ) %>%
+  
+  mutate(
+    across(
+      -Locus,
+      ~ replace_na(., 0)
+    )
+  ) %>%
+  
+  select(
+    Locus,
+    Dog_private_n,
+    Dog_private_once_n,
+    Max_N_Dogs,
+    Wolf_private_n,
+    Wolf_private_once_n,
+    Max_Wolves_private,
+    N_detected_in_hybrids,
+    Max_N_Hybrids
+  )
+
+
+private_alleles_locus_summary
+```
+
+
+5.8 Create overall summary statistics
+
+```{r}
+# =====================================================
+# Overall numbers
+# =====================================================
+
+n_dog_private_alleles <- length(
+  dog_private_alleles
+)
+
+n_wolf_private_alleles <- length(
+  wolf_private_alleles
+)
+
+
+# Unique dog-private alleles detected in hybrids
+alleles_in_hybrids <- hybrid_private_exact$Dog_private_alleles %>%
+  na.omit() %>%
+  strsplit(";") %>%
+  unlist()
+
+n_dog_private_in_hybrids <- length(
+  unique(alleles_in_hybrids)
+)
+
+
+# Proportion of dog-private alleles detected in hybrids
+prop_private_in_hybrids <-
+  n_dog_private_in_hybrids /
+  n_dog_private_alleles
+
+
+# Summary
+summary_private <- tibble(
+  Total_dog_private_alleles = n_dog_private_alleles,
+  Total_wolf_private_alleles = n_wolf_private_alleles,
+  Detected_dog_private_in_hybrids = n_dog_private_in_hybrids,
+  Proportion_dog_private_in_hybrids = prop_private_in_hybrids
+)
+
+summary_private
+```
+
+5.9 Export results to Excel
+
+```{r}
+# =====================================================
+# Export all results to one Excel workbook
+# =====================================================
+
+wb <- createWorkbook()
+
+
+# Locus-level summary
+addWorksheet(
+  wb,
+  "Locus_summary"
+)
+
+writeData(
+  wb,
+  "Locus_summary",
+  private_alleles_locus_summary
+)
+
+
+# Hybrid-specific results
+addWorksheet(
+  wb,
+  "Hybrid_private_alleles"
+)
+
+writeData(
+  wb,
+  "Hybrid_private_alleles",
+  hybrid_private_exact
+)
+
+
+# Dog private alleles
+addWorksheet(
+  wb,
+  "Dog_private_alleles"
+)
+
+writeData(
+  wb,
+  "Dog_private_alleles",
+  dog_private_table
+)
+
+
+# Wolf private alleles
+addWorksheet(
+  wb,
+  "Wolf_private_alleles"
+)
+
+writeData(
+  wb,
+  "Wolf_private_alleles",
+  wolf_private_table
+)
+
+
+# Overall summary
+addWorksheet(
+  wb,
+  "Overall_summary"
+)
+
+writeData(
+  wb,
+  "Overall_summary",
+  summary_private
+)
+
+
+# Formatting
+for (sheet in names(wb)) {
+  
+  setColWidths(
+    wb,
+    sheet,
+    cols = 1:ncol(
+      read.xlsx(
+        wb,
+        sheet = sheet
+      )
+    ),
+    widths = "auto"
+  )
+  
+  freezePane(
+    wb,
+    sheet,
+    firstRow = TRUE
+  )
+}
+
+
+# Save
+saveWorkbook(
+  wb,
+  file = "Results_of_data_exploration/Private_alleles_Dog_Wolf_Hybrids.xlsx",
+  overwrite = TRUE
+)
+```
+
+
+

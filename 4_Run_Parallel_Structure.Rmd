@@ -1,0 +1,242 @@
+Code for running ParallesStructure on linux
+
+# Template: analyses with simulation replicates
+```{r}
+# ============================================================
+# Run STRUCTURE analyses using ParallelStructure
+# ============================================================
+
+# ---------- Load library and set path ----------
+# Install and load ParallelStructure package
+#install.packages("ParallelStructure", repos="http://R-Forge.R-project.org") #only run the first time
+library(ParallelStructure)
+
+# Path to the STRUCTURE installation.
+# CHANGE this to the location of the STRUCTURE executable.
+structure_path <- "/path/to/Structure/"
+
+# ---------- Function to run one job ----------
+run_job <- function(jobnum) {
+  # Path to the ParallelStructure joblist file. 
+  # CHANGE the path and filename pattern to match your files.
+joblist <- paste0(
+  "/path/to/analysis_folder/dataset_",
+  jobnum,
+  "/joblist_",
+  jobnum,
+  ".txt"
+)
+
+infile <- paste0(
+  "/path/to/analysis_folder/dataset_",
+  jobnum,
+  "/dataset_",
+  jobnum,
+  ".txt"
+)
+
+outpath <- paste0(
+  "/path/to/analysis_folder/dataset_",
+  jobnum,
+  "/"
+)
+
+  # Check that required files exist
+if (!file.exists(joblist)) {
+  stop("Joblist file not found: ", joblist)
+}
+
+if (!file.exists(infile)) {
+  stop("STRUCTURE input file not found: ", infile)
+}  
+
+  # ---------- Run ParallelStructure ----------
+  
+  parallel_structure(
+    joblist = joblist,
+    n_cpu = 20,              # Number of CPUs to use. Change according to available resources.
+    structure_path = structure_path,
+    infile = infile,
+    outpath = outpath,
+    
+    numinds = 745,          # Number of individuals in the dataset. CHANGE to match your dataset.
+    numloci = 20,            # Number of loci/markers. CHANGE to match your dataset.
+    
+    plot_output = 1,         # Generate STRUCTURE plot output.
+    label = 1,               # Input file contains individual labels.
+    popdata = 1,             # Input file contains population information.
+    popflag = 0,             # Population flag is not used.
+    phenotypes = 0,          # No phenotype data.
+    markernames = 1,         # Input file contains marker/locus names.
+    mapdist = 0,             # No map distances are used.
+    onerowperind = 1,        # Each individual is represented by one row.
+    phaseinfo = 0,           # No phase information.
+    extracol = 0,            # No extra columns.
+    
+    missing = -9,            # Missing genotype value used in the input file.
+    ploidy = 2,              # Ploidy of the organisms.
+    
+    usepopinfo = 0,          # Disable USEPOPINFO model; population labels are not used as priors.
+    
+    revert_convert = 1,      # Convert STRUCTURE output back to the original format.
+    printqhat = 1,           # Print individual Q estimates.
+    
+    locdata = 0,             # No location information.
+    recessivealleles = 0,    # No recessive alleles.
+    phased = 0,               # Data are not phased.
+    noadmix = 0,             # Use the admixture model.
+    linkage = 0,              # Markers are treated as unlinked.
+    locprior = 0,             # Do not use the LOCPRIOR model.
+    
+    inferalpha = 1           # Estimate alpha from the data.
+  )
+}
+
+# ---------- Run jobs sequentially ----------
+
+# Specify the jobs to run.
+# For example:
+#   1:10       = run jobs 1 through 10
+#   c(1,3,7)   = run only jobs 1, 3 and 7
+#
+# CHANGE this to the jobs you want to analyse.
+
+for (i in 1:10) {
+  cat("Running job", i, "...\n")
+  run_job(i)
+  cat("Job", i, "finished.\n\n")
+}
+
+
+```
+
+#EXAMPLES
+#Example 1: Simulated datasets with simulation replicates (1-10) specific folders (analyses 1c, 2ai, 2aii, 2bi, 2bii, 3b, 4a).
+Example for analyses 1c, where folders are arranged as (each simulation replicate folder contains a STRUCTURE input file and a joblist defining the STRUCTURE runs):
+
+ 1c_NDinaric_empirical_Sim_dog/
+  │
+  ├── 1c_NDinaric_empirical_Sim_dog_1/
+  │   ├── joblist_1c_1.txt
+  │   ├── 1c_NDinaric_empirical_Sim_dog_1.txt
+  │   ├── ...
+  │
+  ├── 1c_NDinaric_empirical_Sim_dog_2/
+  │   ├── joblist_1c_2.txt
+  │   ├── 1c_NDinaric_empirical_Sim_dog_2.txt
+  │   ├── ...
+  │...
+
+
+```{r}
+
+# ---------- Load library and set path ----------
+library(ParallelStructure)
+
+structure_path <- "/path/to/Structure/"
+
+# ---------- Function to run one job ----------
+run_job <- function(jobnum) {
+  joblist <- paste0("/ParallelStructure_Results/1c_NDinaric_empirical_Sim_dog/1c_NDinaric_empirical_Sim_dog_", jobnum, "/joblist_1c_", jobnum, ".txt")
+  infile  <- paste0("/ParallelStructure_Results/1c_NDinaric_empirical_Sim_dog/1c_NDinaric_empirical_Sim_dog_", jobnum, "/1c_NDinaric_empirical_Sim_dog_", jobnum, ".txt")
+  outpath <- paste0("/ParallelStructure_Results/1c_NDinaric_empirical_Sim_dog/1c_NDinaric_empirical_Sim_dog_", jobnum, "/")
+  
+    # Check that required files exist
+if (!file.exists(joblist)) {
+  stop("Joblist file not found: ", joblist)
+}
+
+if (!file.exists(infile)) {
+  stop("STRUCTURE input file not found: ", infile)
+} 
+  
+  parallel_structure(
+    joblist = joblist,
+    n_cpu = 5, # Number of CPUs/processes used by ParallelStructure; here set to match the number of STRUCTURE runs in the joblist. CHANGE if needed.
+    structure_path = structure_path,
+    infile = infile,
+    outpath = outpath,
+    numinds = 745,  #CHANGE to match your dataset.
+    numloci = 20,  #CHANGE to match your dataset.
+    plot_output = 1,
+    label = 1,
+    popdata = 1,
+    popflag = 0,
+    phenotypes = 0,
+    markernames = 1,
+    mapdist = 0,
+    onerowperind = 1,
+    phaseinfo = 0,
+    extracol = 0,
+    missing = -9,
+    ploidy = 2,
+    usepopinfo = 0,
+    revert_convert = 1,
+    printqhat = 1,
+    locdata = 0,
+    recessivealleles = 0,
+    phased = 0,
+    noadmix = 0,
+    linkage = 0,
+    locprior = 0,
+    inferalpha = 1
+  )
+}
+
+# ---------- Run jobs sequentially ----------
+for (i in 1:10) {
+  cat("Running job", i, "...\n")
+  run_job(i)
+  cat("Job", i, "finished.\n\n")
+}
+
+
+```
+
+#Example 2: Single STRUCTURE run without simulation replicates (analyses 1a, 1b, 3a).
+Example for analyses 3a.
+```{r}
+
+# ---------- Load library and set path ----------
+library(ParallelStructure)
+
+structure_path <- "/path/to/Structure/"
+
+# ---------- One job run without function ----------
+  joblist <- "/ParallelStructure_Results/3a_Empirical_samples_no_sim/joblist_3a.txt"
+  infile  <- "/ParallelStructure_Results/3a_Empirical_samples_no_sim/3a_Empirical_samples_no_sim.txt"
+  outpath <- "/ParallelStructure_Results/3a_Empirical_samples_no_sim/"
+  
+  parallel_structure(
+    joblist = joblist,
+    n_cpu = 20,  #CHANGE if needed
+    structure_path = structure_path,
+    infile = infile,
+    outpath = outpath,
+    numinds = 742,  #CHANGE to match your dataset.
+    numloci = 20,  #CHANGE to match your dataset.
+    plot_output = 1,
+    label = 1,
+    popdata = 1,
+    popflag = 0,
+    phenotypes = 0,
+    markernames = 1,
+    mapdist = 0,
+    onerowperind = 1,
+    phaseinfo = 0,
+    extracol = 0,
+    missing = -9,
+    ploidy = 2,
+    usepopinfo = 0,
+    revert_convert = 1,
+    printqhat = 1,
+    locdata = 0,
+    recessivealleles = 0,
+    phased = 0,
+    noadmix = 0,
+    linkage = 0,
+    locprior = 0,
+    inferalpha = 1
+  )
+
+```

@@ -1,0 +1,1275 @@
+1. Importing libraries, functions, samples and creating genind data
+```{r}
+#importing libraries
+library(readxl)
+library(tidyverse)
+library(adegenet)
+
+```
+
+```{r}
+# Functions for exporting genind datasets to STRUCTURE format
+# Creates:
+# 1) STRUCTURE genotype file (.txt)
+# 2) Population ID legend (_POP.txt)
+# 3) Sample ID–population mapping file (_PopMap.txt)
+
+writeStructure <- function (genotypes,pop,path){
+#STRUCTURE export
+#genotypes = genotypes genind object
+#pop = ordered population factor used for STRUCTURE population IDs
+#path = output file path
+  gen <- genind2df(genotypes,sep=" ")
+  gen[is.na(gen)] <- "-9 -9"
+  output <- cbind(id = row.names(gen),pop = as.numeric(pop),gen[2:ncol(gen)])
+  cat(locNames(genotypes),"\n",file = path)
+  write.table(output,path,sep = " ",row.names = FALSE,col.names = FALSE,append = TRUE,quote = FALSE)
+  outLegend <- data.frame(id = 1:length(levels(pop)),Pop = levels(pop))
+  print(outLegend)
+  return(outLegend)
+}
+
+#
+export_structure_dataset <- function(gen_sorted, out_prefix) {
+#Exporting all three STRUCTURE-related files
+#gen_sorted = sorted genind object with populations ordered according to STRUCTURE output requirements
+#out_prefix = full path and file prefix for exported STRUCTURE files
+  
+    
+  # Ensure output directory exists
+  dir.create(dirname(out_prefix), recursive = TRUE, showWarnings = FALSE)
+  
+  # 1) STRUCTURE genotype file 
+  strLegend <- writeStructure(
+    gen_sorted,
+    pop(gen_sorted),
+    paste0(out_prefix, ".txt")
+  )
+  # 2) Population ID legend
+  colnames(strLegend) <- c("PopID", "PopName")
+  strLegend$PopName <- paste0(levels(pop(gen_sorted))[strLegend$PopID])
+
+  write.table(
+    strLegend,
+    paste0(out_prefix, "_POP.txt"),
+    sep = " ",
+    row.names = FALSE,
+    col.names = FALSE,
+    quote = FALSE
+  )
+  
+  # 3) Sample ID–population mapping
+  sample_ids <- indNames(gen_sorted)
+  pop_ids <- pop(gen_sorted)
+
+  pop_df <- data.frame(
+    SampleID = sample_ids,
+    PopID = as.integer(pop_ids)
+  )
+
+  final_df <- merge(pop_df, strLegend, by = "PopID")
+
+  final_df <- final_df[
+    order(match(final_df$SampleID, sample_ids)),
+    c("SampleID", "PopName")
+  ]
+
+  write.table(
+    final_df,
+    paste0(out_prefix, "_PopMap.txt"),
+    sep = "\t",
+    row.names = FALSE,
+    col.names = FALSE,
+    quote = FALSE
+  )
+}
+```
+
+```{r}
+#Importing cleaned data
+raw_data_all = read_xlsx("Data/Sample_data.xlsx", sheet = "Samples_data") 
+```
+
+```{r}
+#Removing "_" from alleles because STRUCTURE can not read the data with them.
+
+locus_cols <- which(names(raw_data_all) == "Cl147"):which(names(raw_data_all) == "Lup23")
+
+raw_data_all[locus_cols] <- lapply(raw_data_all[locus_cols], function(x) {
+  gsub("_", "", as.character(x))
+})
+```
+
+```{r}
+#Creating genind object for STRUCTURE data preparation 
+gendata_cleaned <-  df2genind(raw_data_all[c("Cl147",	"Cl233",	"Cl264",	"Cl274",	"Cl285",	"Cl291",	"Cl308",	"Cl330",	"Cl344","Cl366",	"Cl375",	"Cl408",	"Cl507",	"Cl527",	"Cl380","Lup02",	"Lup13",	"Lup20",	"Lup21",	"Lup23")], sep = " ", NA.char = "-9 -9")
+gendata_cleaned@other <-  raw_data_all[,1:10]
+indNames(gendata_cleaned) <- raw_data_all$SampleID
+pop(gendata_cleaned) <-  raw_data_all$Classified_STRUCTURE
+unique(pop(gendata_cleaned))
+```
+
+2. Preparing data for STRUCTURE analyses
+
+```{r}
+#Filtering out only North Dinaric wolf samples from Slovenia and Croatia, hybrid samples and dog samples
+gendata_NDinaric <- gendata_cleaned[pop(gendata_cleaned) %in% c ("Dog", "F1", "BC1w", "BC2w", "W-Slovenia", "W-Croatia")]
+
+```
+
+2.1 Slovenia–Croatia dataset without reference populations
+1a) Using only empirical data confirmed with SNP analyses
+
+```{r}
+#Filtering and keeping only samples that were analysed with SNP panel
+keep_snp <- gendata_NDinaric@other$"SNP_pannel" != "No"
+
+gendata_NDinaric_SNP <- gendata_NDinaric[keep_snp, ]
+```
+
+```{r}
+# Exporting data for STRUCTURE and further analyses
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+desired_order <- c("Dog", "F1", "BC1w", "BC2w", "W-Slovenia", "W-Croatia")
+
+  # ------------------------------------------------------------
+  # REORDERING
+  # ------------------------------------------------------------
+
+message("Processing empirical data (no simulations)")
+
+# Make sure ordering matches desired_order
+present <- sort(unique(as.character(pop(gendata_NDinaric_SNP))))
+unknown <- setdiff(present, desired_order)
+if (length(unknown) > 0) {
+  stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+}
+
+# Reorder
+pop(gendata_NDinaric_SNP) <- factor(pop(gendata_NDinaric_SNP), levels = desired_order)
+
+pops <- pop(gendata_NDinaric_SNP)
+sort_index <- order(factor(pops, levels = desired_order))
+gen_sorted <- gendata_NDinaric_SNP[sort_index, ]
+pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+  # ------------------------------------------------------------
+  # EXPORT
+  # ------------------------------------------------------------
+
+out_dir <- "Data_for_Structure/1a_NDinaric_empirical"
+
+out_prefix <- file.path(out_dir, "1a_NDinaric_empirical")
+
+export_structure_dataset(gen_sorted, out_prefix)
+```
+1b) Using empirical data with additional dogs not confirmed by SNP analyses
+
+```{r}
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+desired_order <- c("Dog", "F1",  "BC1w", "BC2w", "W-Slovenia", "W-Croatia")
+
+  # ------------------------------------------------------------
+  # REORDERING
+  # ------------------------------------------------------------
+
+message("Processing empirical data (no simulations)")
+
+
+# Make sure ordering matches desired_order
+present <- sort(unique(as.character(pop(gendata_NDinaric))))
+unknown <- setdiff(present, desired_order)
+if (length(unknown) > 0) {
+  stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+}
+
+# Reorder
+pop(gendata_NDinaric) <- factor(pop(gendata_NDinaric), levels = desired_order)
+
+pops <- pop(gendata_NDinaric)
+sort_index <- order(factor(pops, levels = desired_order))
+gen_sorted <- gendata_NDinaric[sort_index, ]
+pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+  # ------------------------------------------------------------
+  # EXPORT
+  # ------------------------------------------------------------
+
+out_dir <- "Data_for_Structure/1b_NDinaric_empirical_all_dogs"
+
+out_prefix <- file.path(out_dir, "1b_NDinaric_empirical_all_dogs")
+
+export_structure_dataset(gen_sorted, out_prefix)
+```
+1c) Simulations of dog samples added to balance the numbers
+
+```{r}
+# ============================================================
+# LOOP OVER SEEDS
+# ============================================================
+
+seeds <- 1:10
+
+for (seed in seeds) {
+
+  message("======================================")
+  message("Processing SEED ", seed)
+  message("======================================")
+
+  set.seed(seed)
+
+  # ------------------------------------------------------------
+  # FUNCTION: expand population using ALL × ALL hybridization
+  # ------------------------------------------------------------
+
+  expand_population <- function(pop_name, n, new_pop_name) {
+
+    inds <- gendata_NDinaric[which(pop(gendata_NDinaric) == pop_name)]
+
+    if (length(inds) == 0) {
+      stop(paste("Population", pop_name, "not found"))
+    }
+
+    hybrid <- hybridize(
+      inds,
+      inds,
+      n   = n,
+      pop = new_pop_name
+    )
+
+    return(hybrid)
+  }
+
+  # ------------------------------------------------------------
+  # DEFINE POPULATIONS TO SIMULATE
+  # ------------------------------------------------------------
+
+  pop_list <- list(
+    list(name = "Dog",         n = 250, new_pop = "Sim-dog")
+  )
+
+  # ------------------------------------------------------------
+  # RUN SIMULATIONS
+  # ------------------------------------------------------------
+
+  expanded_populations <- list()
+
+  for (pop in pop_list) {
+    message("Processing population: ", pop$name)
+
+    expanded_populations[[pop$new_pop]] <- expand_population(
+      pop_name     = pop$name,
+      n            = pop$n,
+      new_pop_name = pop$new_pop
+    )
+  }
+
+    if (length(expanded_populations) == 1) {
+  simulations_dogs <- expanded_populations[[1]]
+} else {
+  simulations_dogs <- do.call(repool, expanded_populations)
+}
+
+
+  # ------------------------------------------------------------
+  # COMBINE ORIGINAL DATA + SIMULATED DATA
+  # ------------------------------------------------------------
+
+  combined_wolves <- repool(
+    gendata_NDinaric,
+    simulations_dogs
+  )
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+  desired_order <- c(
+    "Dog", "Sim-dog",
+    "F1", "BC1w", "BC2w",
+    "W-Slovenia", "W-Croatia"
+  )
+
+# Make sure ordering matches desired_order
+present <- sort(unique(as.character(pop(combined_wolves))))
+unknown <- setdiff(present, desired_order)
+if (length(unknown) > 0) {
+  stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+}
+
+# Reorder  
+  pop(combined_wolves) <- factor(pop(combined_wolves), levels = desired_order)
+
+  pops <- pop(combined_wolves)
+
+  sort_index <- order(factor(pops, levels = desired_order))
+  gen_sorted <- combined_wolves[sort_index, ]
+  pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+  # ------------------------------------------------------------
+  # EXPORT FOR STRUCTURE
+  # ------------------------------------------------------------
+
+  out_dir <- paste0(
+    "Data_for_Structure/1c_NDinaric_empirical_Sim_dog/",
+    "1c_NDinaric_empirical_Sim_dog_", seed
+  )  
+  
+  out_prefix <- file.path(
+  out_dir,
+  paste0("1c_NDinaric_empirical_Sim_dog_", seed)
+)
+
+export_structure_dataset(gen_sorted, out_prefix)
+}
+```
+
+2.2 Population openness comparison without reference populations – separate analyses for open population (Croatia) vs. closed population (Italy)
+
+2ai)   Croatia - reduced sample size (100 per parental group) and simulated hybrids
+
+```{r}
+# ============================================================
+# LOOP OVER SEEDS 
+# ============================================================
+
+seeds <- 1:10
+
+for (seed in seeds) {
+
+  message("======================================")
+  message("Processing SEED ", seed)
+  message("======================================")
+
+  set.seed(seed)
+
+  # ------------------------------------------------------------
+  # FUNCTION: make hybrids  
+  # ------------------------------------------------------------
+
+  make_hybrids <- function(Dogs, wolves, tag) {
+
+    F1   <- hybridize(Dogs, wolves, n = 100, pop = paste0("Sim-F1_", tag))
+    BC1d <- hybridize(Dogs, F1,     n = 100, pop = paste0("Sim-BC1d_", tag))
+    BC2d <- hybridize(Dogs, BC1d,   n = 100, pop = paste0("Sim-BC2d_", tag))
+    BC1w  <- hybridize(wolves, F1,   n = 100, pop = paste0("Sim-BC1w_", tag))
+    BC2w <- hybridize(wolves, BC1w,  n = 100, pop = paste0("Sim-BC2w_", tag))
+
+    return(list(BC2d = BC2d, BC1d = BC1d, F1 = F1, BC1w = BC1w, BC2w = BC2w))
+  }
+
+  # ------------------------------------------------------------
+  # SELECT CROATIA WOLVES 
+  # ------------------------------------------------------------
+
+  CROwolves_all <- gendata_cleaned[pop = "W-Croatia"]
+  CROwolves_sel <- CROwolves_all[sample(1:nInd(CROwolves_all), 100)]
+
+  # ------------------------------------------------------------
+  # FILTER ORIGINAL DATA 
+  # ------------------------------------------------------------
+
+  gendata_filtered <- repool(
+    gendata_cleaned[pop = c("Dog", "F1", "BC1w", "BC2w")],
+    CROwolves_sel
+  )
+
+  Dogs <- gendata_cleaned[pop = "Dog"]
+
+  # ------------------------------------------------------------
+  # CREATE HYBRIDS 
+  # ------------------------------------------------------------
+
+  hybrids_CRO <- make_hybrids(Dogs, CROwolves_all, "CRO")
+
+  combined_simulations_only_hybrids <- repool(
+    hybrids_CRO$BC2d,
+    hybrids_CRO$BC1d,
+    hybrids_CRO$F1,
+    hybrids_CRO$BC1w,
+    hybrids_CRO$BC2w
+  )
+
+  # ------------------------------------------------------------
+  # COMBINE ORIGINAL + SIMULATIONS 
+  # ------------------------------------------------------------
+
+  combined_all <- repool(
+    gendata_filtered,
+    combined_simulations_only_hybrids
+  )
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+  desired_order <- c(
+    "Dog",
+    "Sim-BC2d_CRO", "Sim-BC1d_CRO",
+    "F1", "Sim-F1_CRO",
+    "BC1w", "Sim-BC1w_CRO",
+    "BC2w", "Sim-BC2w_CRO",
+    "W-Croatia"
+  )
+
+  # Make sure ordering matches desired_order
+  present <- sort(unique(as.character(pop(combined_all))))
+  unknown <- setdiff(present, desired_order)
+
+  if (length(unknown) > 0) {
+    stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+  }
+  
+# Reorder
+  pop(combined_all) <- factor(pop(combined_all), levels = desired_order)
+
+  pops <- pop(combined_all)
+
+  sort_index <- order(factor(pops, levels = desired_order))
+  gen_sorted <- combined_all[sort_index, ]
+  pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+
+  # ------------------------------------------------------------
+  # EXPORT FOR STRUCTURE 
+  # ------------------------------------------------------------
+  out_dir  <- paste0("Data_for_Structure/2ai_Croatia_low_numbers/", "2ai_Croatia_low_numbers_", seed)
+    
+  out_prefix <- file.path(out_dir, paste0("2ai_Croatia_low_numbers_", seed))
+
+export_structure_dataset(gen_sorted, out_prefix)
+}
+```
+2aii)  Italy - reduced sample size (100 per parental group) and simulated hybrids
+
+```{r}
+# ============================================================
+# LOOP OVER SEEDS 
+# ============================================================
+
+seeds <- 1:10
+
+for (seed in seeds) {
+
+  message("======================================")
+  message("Processing SEED ", seed)
+  message("======================================")
+
+  set.seed(seed)
+
+  # ------------------------------------------------------------
+  # KEEP ONLY EMPIRICAL SAMPLES 
+  # ------------------------------------------------------------
+
+  gendata_filtered <- gendata_cleaned[pop = c("Dog", "W-Italy")]
+
+  # ------------------------------------------------------------
+  # FUNCTION: expand population 
+  # ------------------------------------------------------------
+
+  expand_population <- function(pop_name, n, new_pop_name) {
+
+    inds <- gendata_filtered[which(pop(gendata_filtered) == pop_name)]
+
+    if (length(inds) == 0) {
+      stop(paste("Population", pop_name, "not found"))
+    }
+
+    hybrid <- hybridize(
+      inds,
+      inds,
+      n   = n,
+      pop = new_pop_name
+    )
+
+    return(hybrid)
+  }
+
+  # ------------------------------------------------------------
+  # DEFINE POPULATIONS TO EXPAND 
+  # ------------------------------------------------------------
+
+  pop_list <- list(
+    list(name = "W-Italy",  n = 72, new_pop = "Sim-W-Italy")
+  )
+
+  # ------------------------------------------------------------
+  # RUN EXPANSIONS 
+  # ------------------------------------------------------------
+
+  expanded_populations <- list()
+
+  for (pop_item in pop_list) {
+
+    message("Expanding population: ", pop_item$name)
+
+    expanded_populations[[pop_item$new_pop]] <- expand_population(
+      pop_name     = pop_item$name,
+      n            = pop_item$n,
+      new_pop_name = pop_item$new_pop
+    )
+  }
+
+  if (length(expanded_populations) == 1) {
+  combined_simulations_no_hybrids <- expanded_populations[[1]]
+} else {
+  combined_simulations_no_hybrids <- do.call(repool, expanded_populations)
+}
+
+  # ------------------------------------------------------------
+  # FUNCTION: make hybrids 
+  # ------------------------------------------------------------
+
+  make_hybrids <- function(Dogs, wolves, tag) {
+
+    F1   <- hybridize(Dogs, wolves, n = 100, pop = paste0("Sim-F1_", tag))
+    BC1d <- hybridize(Dogs, F1,     n = 100, pop = paste0("Sim-BC1d_", tag))
+    BC2d <- hybridize(Dogs, BC1d,   n = 100, pop = paste0("Sim-BC2d_", tag))
+    BC1w  <- hybridize(wolves, F1,   n = 100, pop = paste0("Sim-BC1w_", tag))
+    BC2w <- hybridize(wolves, BC1w,  n = 100, pop = paste0("Sim-BC2w_", tag))
+
+    return(list(BC2d = BC2d, BC1d = BC1d, F1 = F1, BC1w = BC1w, BC2w = BC2w))
+  }
+
+  # ------------------------------------------------------------
+  # CREATE ITALIAN HYBRIDS 
+  # ------------------------------------------------------------
+
+  Dogs      <- gendata_filtered[pop = "Dog"]
+  ITAwolves <- gendata_filtered[pop = "W-Italy"]
+
+  hybrids_ITA <- make_hybrids(Dogs, ITAwolves, "ITA")
+
+  combined_simulations_only_hybrids <- repool(
+    hybrids_ITA$BC2d,
+    hybrids_ITA$BC1d,
+    hybrids_ITA$F1,
+    hybrids_ITA$BC1w,
+    hybrids_ITA$BC2w
+  )
+
+  # ------------------------------------------------------------
+  # COMBINE ORIGINAL + SIMULATIONS 
+  # ------------------------------------------------------------
+
+  combined_all <- repool(
+    gendata_filtered,
+    combined_simulations_only_hybrids,
+    combined_simulations_no_hybrids
+  )
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+  desired_order <- c(
+  "Dog",
+  "Sim-BC2d_ITA", "Sim-BC1d_ITA", 
+  "Sim-F1_ITA", "Sim-BC1w_ITA", "Sim-BC2w_ITA",
+  "W-Italy", "Sim-W-Italy"
+  )
+
+# Make sure ordering matches desired_order
+  present <- sort(unique(as.character(pop(combined_all))))
+  unknown <- setdiff(present, desired_order)
+
+  if (length(unknown) > 0) {
+    stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+  }
+
+# Reorder
+  pop(combined_all) <- factor(pop(combined_all), levels = desired_order)
+
+  pops <- pop(combined_all)
+
+  sort_index <- order(factor(pops, levels = desired_order))
+  gen_sorted <- combined_all[sort_index, ]
+  pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+  # ------------------------------------------------------------
+  # EXPORT FOR STRUCTURE 
+  # ------------------------------------------------------------
+  out_dir  <- paste0("Data_for_Structure/2aii_Italy_low_numbers/","2aii_Italy_low_numbers_", seed)
+  
+  out_prefix <- file.path(
+    out_dir,
+    paste0("2aii_Italy_low_numbers_", seed)
+  )
+
+export_structure_dataset(gen_sorted, out_prefix)
+}
+```
+
+2bi)   Croatia - increased sample size (500 per parental group) and simulated hybrids
+```{r}
+# ============================================================
+# LOOP OVER SEEDS 
+# ============================================================
+
+seeds <- 1:10
+
+for (seed in seeds) {
+
+  message("======================================")
+  message("Processing SEED ", seed)
+  message("======================================")
+
+  set.seed(seed)
+
+  # ------------------------------------------------------------
+  # KEEP ONLY EMPIRICAL SAMPLES 
+  # ------------------------------------------------------------
+
+  gendata_filtered <- gendata_cleaned[pop = c("Dog", "W-Croatia", "F1", "BC1w", "BC2w")]
+
+  # ------------------------------------------------------------
+  # FUNCTION: expand population 
+  # ------------------------------------------------------------
+
+  expand_population <- function(pop_name, n, new_pop_name) {
+
+    inds <- gendata_filtered[which(pop(gendata_filtered) == pop_name)]
+
+    if (length(inds) == 0) {
+      stop(paste("Population", pop_name, "not found"))
+    }
+
+    hybrid <- hybridize(
+      inds,
+      inds,
+      n   = n,
+      pop = new_pop_name
+    )
+
+    return(hybrid)
+  }
+
+  # ------------------------------------------------------------
+  # DEFINE POPULATIONS TO EXPAND 
+  # ------------------------------------------------------------
+
+  pop_list <- list(
+    list(name = "Dog",      n = 400, new_pop = "Sim-dog"),
+    list(name = "W-Croatia",  n = 260, new_pop = "Sim-W-Croatia")
+  )
+
+  # ------------------------------------------------------------
+  # RUN EXPANSIONS 
+  # ------------------------------------------------------------
+
+  expanded_populations <- list()
+
+  for (pop_item in pop_list) {
+
+    message("Expanding population: ", pop_item$name)
+
+    expanded_populations[[pop_item$new_pop]] <- expand_population(
+      pop_name     = pop_item$name,
+      n            = pop_item$n,
+      new_pop_name = pop_item$new_pop
+    )
+  }
+
+  combined_simulations_no_hybrids <- do.call(repool, expanded_populations)
+
+  # ------------------------------------------------------------
+  # FUNCTION: make hybrids 
+  # ------------------------------------------------------------
+
+  make_hybrids <- function(Dogs, wolves, tag) {
+
+    F1   <- hybridize(Dogs, wolves, n = 100, pop = paste0("Sim-F1_", tag))
+    BC1d <- hybridize(Dogs, F1,     n = 100, pop = paste0("Sim-BC1d_", tag))
+    BC2d <- hybridize(Dogs, BC1d,   n = 100, pop = paste0("Sim-BC2d_", tag))
+    BC1w  <- hybridize(wolves, F1,   n = 100, pop = paste0("Sim-BC1w_", tag))
+    BC2w <- hybridize(wolves, BC1w,  n = 100, pop = paste0("Sim-BC2w_", tag))
+
+    return(list(BC2d = BC2d, BC1d = BC1d, F1 = F1, BC1w = BC1w, BC2w = BC2w))
+  }
+
+  # ------------------------------------------------------------
+  # CREATE CROATIA HYBRIDS 
+  # ------------------------------------------------------------
+
+  Dogs      <- gendata_filtered[pop = "Dog"]
+  CROwolves <- gendata_filtered[pop = "W-Croatia"]
+
+  hybrids_CRO <- make_hybrids(Dogs, CROwolves, "CRO")
+
+  combined_simulations_only_hybrids <- repool(
+    hybrids_CRO$BC2d,
+    hybrids_CRO$BC1d,
+    hybrids_CRO$F1,
+    hybrids_CRO$BC1w,
+    hybrids_CRO$BC2w
+  )
+
+  # ------------------------------------------------------------
+  # COMBINE ORIGINAL + SIMULATIONS 
+  # ------------------------------------------------------------
+
+  combined_all <- repool(
+    gendata_filtered,
+    combined_simulations_only_hybrids,
+    combined_simulations_no_hybrids
+  )
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+  desired_order <- c(
+    "Dog", "Sim-dog",
+    "Sim-BC2d_CRO", "Sim-BC1d_CRO",
+    "F1", "Sim-F1_CRO",
+    "BC1w", "Sim-BC1w_CRO",
+    "BC2w", "Sim-BC2w_CRO",
+    "W-Croatia", "Sim-W-Croatia"
+  )
+
+# Make sure ordering matches desired_order
+  present <- sort(unique(as.character(pop(combined_all))))
+  unknown <- setdiff(present, desired_order)
+
+  if (length(unknown) > 0) {
+    stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+  }
+
+# Reorder
+  pop(combined_all) <- factor(pop(combined_all), levels = desired_order)
+
+  pops <- pop(combined_all)
+
+  sort_index <- order(factor(pops, levels = desired_order))
+  gen_sorted <- combined_all[sort_index, ]
+  pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+
+  # ------------------------------------------------------------
+  # EXPORT FOR STRUCTURE 
+  # ------------------------------------------------------------
+  
+  out_dir  <- paste0("Data_for_Structure/2bi_Croatia_high_numbers/","2bi_Croatia_high_numbers_", seed)
+  out_prefix <- file.path(
+    out_dir,
+    paste0("2bi_Croatia_high_numbers_", seed)
+  )
+
+export_structure_dataset(gen_sorted, out_prefix)
+}
+```
+
+2bii)  Italy - increased sample size (500 per parental group) and simulated hybrids
+
+```{r}
+# ============================================================
+# LOOP OVER SEEDS 
+# ============================================================
+
+seeds <- 1:10
+
+for (seed in seeds) {
+
+  message("======================================")
+  message("Processing SEED ", seed)
+  message("======================================")
+
+  set.seed(seed)
+
+  # ------------------------------------------------------------
+  # KEEP ONLY EMPIRICAL SAMPLES 
+  # ------------------------------------------------------------
+
+  gendata_filtered <- gendata_cleaned[pop = c("Dog", "W-Italy")]
+
+  # ------------------------------------------------------------
+  # FUNCTION: expand population 
+  # ------------------------------------------------------------
+
+  expand_population <- function(pop_name, n, new_pop_name) {
+
+    inds <- gendata_filtered[which(pop(gendata_filtered) == pop_name)]
+
+    if (length(inds) == 0) {
+      stop(paste("Population", pop_name, "not found"))
+    }
+
+    hybrid <- hybridize(
+      inds,
+      inds,
+      n   = n,
+      pop = new_pop_name
+    )
+
+    return(hybrid)
+  }
+
+  # ------------------------------------------------------------
+  # DEFINE POPULATIONS TO EXPAND 
+  # ------------------------------------------------------------
+
+  pop_list <- list(
+    list(name = "Dog",      n = 400, new_pop = "Sim-dog"),
+    list(name = "W-Italy",  n = 472, new_pop = "Sim-W-Italy")
+  )
+
+  # ------------------------------------------------------------
+  # RUN EXPANSIONS 
+  # ------------------------------------------------------------
+
+  expanded_populations <- list()
+
+  for (pop_item in pop_list) {
+
+    message("Expanding population: ", pop_item$name)
+
+    expanded_populations[[pop_item$new_pop]] <- expand_population(
+      pop_name     = pop_item$name,
+      n            = pop_item$n,
+      new_pop_name = pop_item$new_pop
+    )
+  }
+
+  combined_simulations_no_hybrids <- do.call(repool, expanded_populations)
+
+  # ------------------------------------------------------------
+  # FUNCTION: make hybrids 
+  # ------------------------------------------------------------
+
+  make_hybrids <- function(Dogs, wolves, tag) {
+
+    F1   <- hybridize(Dogs, wolves, n = 100, pop = paste0("Sim-F1_", tag))
+    BC1d <- hybridize(Dogs, F1,     n = 100, pop = paste0("Sim-BC1d_", tag))
+    BC2d <- hybridize(Dogs, BC1d,   n = 100, pop = paste0("Sim-BC2d_", tag))
+    BC1w  <- hybridize(wolves, F1,   n = 100, pop = paste0("Sim-BC1w_", tag))
+    BC2w <- hybridize(wolves, BC1w,  n = 100, pop = paste0("Sim-BC2w_", tag))
+
+    return(list(BC2d = BC2d, BC1d = BC1d, F1 = F1, BC1w = BC1w, BC2w = BC2w))
+  }
+
+  # ------------------------------------------------------------
+  # CREATE ITALIAN HYBRIDS 
+  # ------------------------------------------------------------
+
+  Dogs      <- gendata_filtered[pop = "Dog"]
+  ITAwolves <- gendata_filtered[pop = "W-Italy"]
+
+  hybrids_ITA <- make_hybrids(Dogs, ITAwolves, "ITA")
+
+  combined_simulations_only_hybrids <- repool(
+    hybrids_ITA$BC2d,
+    hybrids_ITA$BC1d,
+    hybrids_ITA$F1,
+    hybrids_ITA$BC1w,
+    hybrids_ITA$BC2w
+  )
+
+  # ------------------------------------------------------------
+  # COMBINE ORIGINAL + SIMULATIONS 
+  # ------------------------------------------------------------
+
+  combined_all <- repool(
+    gendata_filtered,
+    combined_simulations_only_hybrids,
+    combined_simulations_no_hybrids
+  )
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+desired_order <- c(
+  "Dog","Sim-dog",
+  "Sim-BC2d_ITA", "Sim-BC1d_ITA", 
+  "Sim-F1_ITA", "Sim-BC1w_ITA", "Sim-BC2w_ITA",
+  "W-Italy", "Sim-W-Italy"
+)
+
+# Make sure ordering matches desired_order
+  present <- sort(unique(as.character(pop(combined_all))))
+  unknown <- setdiff(present, desired_order)
+
+  if (length(unknown) > 0) {
+    stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+  }
+  
+# Reorder
+  pop(combined_all) <- factor(pop(combined_all), levels = desired_order)
+
+  pops <- pop(combined_all)
+
+  sort_index <- order(factor(pops, levels = desired_order))
+  gen_sorted <- combined_all[sort_index, ]
+  pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+  # ------------------------------------------------------------
+  # EXPORT FOR STRUCTURE 
+  # ------------------------------------------------------------
+
+  out_dir  <- paste0("Data_for_Structure/2bii_Italy_high_numbers/","2bii_Italy_high_numbers_", seed)
+  
+  out_prefix <- file.path(
+    out_dir,
+    paste0("2bii_Italy_high_numbers_", seed)
+  )
+
+export_structure_dataset(gen_sorted, out_prefix)
+}
+
+```
+
+
+2.3 All empirical samples with reference populations
+
+3a) Empirical individuals only 
+
+```{r}
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+desired_order <- c("Dog", "Sim-dog","F1", "BC1w","BC2w", "W-Slovenia", "W-Croatia", "W-Middle_Balkan", "W-N.Macedonia", "W-Bulgaria", "W-Italy", "W-Germany", "W-Romania")
+
+  # ------------------------------------------------------------
+  # REORDERING
+  # ------------------------------------------------------------
+
+message("Processing empirical data (no simulations)")
+
+# Make sure ordering matches desired_order
+present <- sort(unique(as.character(pop(gendata_cleaned))))
+unknown <- setdiff(present, desired_order)
+if (length(unknown) > 0) {
+  stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+}
+
+# Reorder
+pop(gendata_cleaned) <- factor(pop(gendata_cleaned), levels = desired_order)
+
+pops <- pop(gendata_cleaned)
+sort_index <- order(factor(pops, levels = desired_order))
+gen_sorted <- gendata_cleaned[sort_index, ]
+pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+  # ------------------------------------------------------------
+  # EXPORT
+  # ------------------------------------------------------------
+
+out_dir <- "Data_for_Structure/3a_Empirical_samples_no_sim"
+
+out_prefix <- file.path(out_dir, "3a_Empirical_samples_no_sim")
+
+export_structure_dataset(gen_sorted, out_prefix)
+
+```
+3b) Empirical individuals and simulated reference samples to balance groups sizes 
+
+```{r}
+# ============================================================
+# LOOP OVER SEEDS
+# ============================================================
+
+seeds <- 1:10
+
+for (seed in seeds) {
+
+  message("======================================")
+  message("Processing SEED ", seed)
+  message("======================================")
+
+  set.seed(seed)
+
+  # ------------------------------------------------------------
+  # FUNCTION: expand population using ALL × ALL hybridization
+  # ------------------------------------------------------------
+
+  expand_population <- function(pop_name, n, new_pop_name) {
+
+    inds <- gendata_cleaned[which(pop(gendata_cleaned) == pop_name)]
+
+    if (length(inds) == 0) {
+      stop(paste("Population", pop_name, "not found"))
+    }
+
+    hybrid <- hybridize(
+      inds,
+      inds,
+      n   = n,
+      pop = new_pop_name
+    )
+
+    return(hybrid)
+  }
+
+  # ------------------------------------------------------------
+  # DEFINE POPULATIONS TO SIMULATE
+  # ------------------------------------------------------------
+
+  pop_list <- list(
+    list(name = "Dog",         n = 250, new_pop = "Sim-dog"),
+    list(name = "W-Germany",     n = 300, new_pop = "Sim-W-Germany"),
+    list(name = "W-Italy",       n = 300, new_pop = "Sim-W-Italy"),
+    list(name = "W-Romania",     n = 300, new_pop = "Sim-W-Romania"),
+    list(name = "W-N.Macedonia", n = 125, new_pop = "Sim-W-N.Macedonia"),
+    list(name = "W-Bulgaria",    n = 125, new_pop = "Sim-W-Bulgaria")
+  )
+
+  # ------------------------------------------------------------
+  # RUN SIMULATIONS
+  # ------------------------------------------------------------
+
+  expanded_populations <- list()
+
+  for (pop in pop_list) {
+    message("Processing population: ", pop$name)
+
+    expanded_populations[[pop$new_pop]] <- expand_population(
+      pop_name     = pop$name,
+      n            = pop$n,
+      new_pop_name = pop$new_pop
+    )
+  }
+
+  combined_simulations_no_hybrids <- do.call(repool, expanded_populations)
+
+  # ------------------------------------------------------------
+  # COMBINE ORIGINAL DATA + SIMULATED DATA
+  # ------------------------------------------------------------
+
+  combined_wolves <- repool(
+    gendata_cleaned,
+    combined_simulations_no_hybrids
+  )
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+  desired_order <- c(
+    "Dog", "Sim-dog",
+    "F1", "BC1w", "BC2w",
+    "W-Slovenia", "W-Croatia", "W-Middle_Balkan",
+    "W-N.Macedonia", "Sim-W-N.Macedonia",
+    "W-Bulgaria", "Sim-W-Bulgaria",
+    "W-Italy", "Sim-W-Italy",
+    "W-Germany", "Sim-W-Germany",
+    "W-Romania", "Sim-W-Romania"
+  )
+
+# Make sure ordering matches desired_order
+present <- sort(unique(as.character(pop(combined_wolves))))
+unknown <- setdiff(present, desired_order)
+if (length(unknown) > 0) {
+  stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+}
+
+# Reorder
+  pop(combined_wolves) <- factor(pop(combined_wolves), levels = desired_order)
+
+  pops <- pop(combined_wolves)
+
+  sort_index <- order(factor(pops, levels = desired_order))
+  gen_sorted <- combined_wolves[sort_index, ]
+  pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+  # ------------------------------------------------------------
+  # EXPORT FOR STRUCTURE
+  # ------------------------------------------------------------
+  out_dir <- paste0(
+    "Data_for_Structure/3b_Empirical_Simulation_data_no_hybrids/",
+    "3b_Empirical_Simulation_data_no_hybrids_", seed
+  )
+  
+  out_prefix <- file.path(out_dir, paste0("3b_Empirical_Simulation_data_no_hybrids_", seed))
+
+export_structure_dataset(gen_sorted, out_prefix)
+}
+```
+2.4. All empirical samples with reference populations and simulated hybrids of different categories
+
+4a) Empirical individuals, additional simulated reference samples to achieve balanced sample sizes and simulated hybrids from five clusters 
+
+```{r}
+# ============================================================
+# LOOP OVER SEEDS
+# ============================================================
+
+seeds <- 1:10
+
+for (seed in seeds) {
+
+  message("======================================")
+  message("Processing SEED ", seed)
+  message("======================================")
+
+  set.seed(seed)
+
+  # ------------------------------------------------------------
+  # FUNCTION: expand population using ALL × ALL hybridization
+  # ------------------------------------------------------------
+
+  expand_population <- function(pop_name, n, new_pop_name) {
+
+    inds <- gendata_cleaned[which(pop(gendata_cleaned) == pop_name)]
+
+    if (length(inds) == 0) {
+      stop(paste("Population", pop_name, "not found"))
+    }
+
+    hybrid <- hybridize(
+      inds,
+      inds,
+      n   = n,
+      pop = new_pop_name
+    )
+
+    return(hybrid)
+  }
+
+  # ------------------------------------------------------------
+  # FUNCTION: make hybrids 
+  # ------------------------------------------------------------
+
+  make_hybrids <- function(Dogs, wolves, tag) {
+
+    F1   <- hybridize(Dogs, wolves, n = 100, pop = paste0("Sim-F1_", tag))
+    BC1w  <- hybridize(wolves, F1,   n = 100, pop = paste0("Sim-BC1w_", tag))
+    BC2w <- hybridize(wolves, BC1w,  n = 100, pop = paste0("Sim-BC2w_", tag))
+
+    return(list(F1 = F1, BC1w = BC1w, BC2w = BC2w))
+  }
+
+  # ------------------------------------------------------------
+  # DEFINE POPULATIONS TO SIMULATE 
+  # ------------------------------------------------------------
+
+  pop_list <- list(
+    list(name = "Dog",         n = 200, new_pop = "Sim-dog"),
+    list(name = "W-Germany",     n = 300, new_pop = "Sim-W-Germany"),
+    list(name = "W-Italy",       n = 300, new_pop = "Sim-W-Italy"),
+    list(name = "W-Romania",     n = 300, new_pop = "Sim-W-Romania"),
+    list(name = "W-N.Macedonia", n = 125, new_pop = "Sim-W-N.Macedonia"),
+    list(name = "W-Bulgaria",    n = 125, new_pop = "Sim-W-Bulgaria")
+  )
+
+  # ------------------------------------------------------------
+  # RUN SIMULATIONS 
+  # ------------------------------------------------------------
+
+  expanded_populations <- list()
+
+  for (pop_item in pop_list) {
+    message("Processing population: ", pop_item$name)
+
+    expanded_populations[[pop_item$new_pop]] <- expand_population(
+      pop_name     = pop_item$name,
+      n            = pop_item$n,
+      new_pop_name = pop_item$new_pop
+    )
+  }
+
+  combined_simulations_no_hybrids <- do.call(repool, expanded_populations)
+
+  # ------------------------------------------------------------
+  # CREATE HYBRIDS
+  # ------------------------------------------------------------
+
+  Dogs       <- gendata_cleaned[which(pop(gendata_cleaned) == "Dog")]
+  CROwolves  <- gendata_cleaned[which(pop(gendata_cleaned) == "W-Croatia")]
+  BULwolves  <- gendata_cleaned[which(pop(gendata_cleaned) == "W-Bulgaria")]
+  ITAwolves  <- gendata_cleaned[which(pop(gendata_cleaned) == "W-Italy")]
+  GERwolves  <- gendata_cleaned[which(pop(gendata_cleaned) == "W-Germany")]
+  ROMwolves  <- gendata_cleaned[which(pop(gendata_cleaned) == "W-Romania")]
+
+  hybrids_CRO <- make_hybrids(Dogs, CROwolves, "CRO")
+  hybrids_BUL <- make_hybrids(Dogs, BULwolves, "BUL")
+  hybrids_ITA <- make_hybrids(Dogs, ITAwolves, "ITA")
+  hybrids_GER <- make_hybrids(Dogs, GERwolves, "GER")
+  hybrids_ROM <- make_hybrids(Dogs, ROMwolves, "ROM")
+
+  combined_simulations_only_hybrids <- repool(
+    hybrids_CRO$F1, hybrids_CRO$BC1w, hybrids_CRO$BC2w,
+    hybrids_BUL$F1, hybrids_BUL$BC1w, hybrids_BUL$BC2w,
+    hybrids_ITA$F1, hybrids_ITA$BC1w, hybrids_ITA$BC2w,
+    hybrids_GER$F1, hybrids_GER$BC1w, hybrids_GER$BC2w,
+    hybrids_ROM$F1, hybrids_ROM$BC1w, hybrids_ROM$BC2w
+  )
+
+  # ------------------------------------------------------------
+  # COMBINE ORIGINAL + ALL SIMULATIONS
+  # ------------------------------------------------------------
+
+  combined_all <- repool(
+    gendata_cleaned,
+    combined_simulations_no_hybrids,
+    combined_simulations_only_hybrids
+  )
+
+  # ------------------------------------------------------------
+  # POPULATION ORDER 
+  # ------------------------------------------------------------
+
+  desired_order <- c(
+    "Dog","Sim-dog",
+    "F1","Sim-F1_CRO","Sim-F1_BUL","Sim-F1_ITA","Sim-F1_GER","Sim-F1_ROM",
+    "BC1w","Sim-BC1w_CRO","Sim-BC1w_BUL","Sim-BC1w_ITA","Sim-BC1w_GER","Sim-BC1w_ROM",
+    "BC2w","Sim-BC2w_CRO","Sim-BC2w_BUL","Sim-BC2w_ITA","Sim-BC2w_GER","Sim-BC2w_ROM",
+    "W-Slovenia","W-Croatia","W-Middle_Balkan",
+    "W-N.Macedonia","Sim-W-N.Macedonia",
+    "W-Bulgaria","Sim-W-Bulgaria",
+    "W-Italy","Sim-W-Italy",
+    "W-Germany","Sim-W-Germany",
+    "W-Romania","Sim-W-Romania"
+  )
+
+  # Make sure ordering matches desired_order
+present <- sort(unique(as.character(pop(combined_all))))
+unknown <- setdiff(present, desired_order)
+if (length(unknown) > 0) {
+  stop("Pop labels not in desired_order: ", paste(unknown, collapse = ", "))
+}
+
+# Reorder
+  pop(combined_all) <- factor(pop(combined_all), levels = desired_order)
+
+  pops <- pop(combined_all)
+
+  sort_index <- order(factor(pops, levels = desired_order))
+  gen_sorted <- combined_all[sort_index, ]
+  pop(gen_sorted) <- factor(pop(gen_sorted), levels = desired_order)
+
+
+  # ------------------------------------------------------------
+  # EXPORT FOR STRUCTURE 
+  # ------------------------------------------------------------
+  out_dir <- paste0(
+    "Data_for_Structure/4a_Simulation_data_wolves_hybrids/",
+    "4a_Simulation_data_wolves_hybrids_", seed
+  )
+  
+  out_prefix <- file.path(
+    out_dir,
+    paste0("4a_Simulation_data_wolves_hybrids_", seed)
+  )
+
+export_structure_dataset(gen_sorted, out_prefix)
+}
+```
+

@@ -1,0 +1,7 @@
+1 Dog
+2 Sim-dog
+3 F1
+4 BC1w
+5 BC2w
+6 W-Slovenia
+7 W-Croatia
