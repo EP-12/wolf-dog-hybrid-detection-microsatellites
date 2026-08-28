@@ -45,7 +45,7 @@ Hristov, H., Iosif, R., Konec, M., Kusak, J., Marucco, F., Nowak, C., Pazhenkova
 Promberger–Fürpass, B., Stronen, A. V., Šnjegota, D., Tsingarska, E., & Skrbinšek, T.
 (2026). *Caveats and limits of microsatellite-based hybrid detection in structured 
 populations: example from wolf-dog hybridisation in the Northern Dinaric mountains 
-[Data and code]*. Zenodo. [DOI: 10.5281/zenodo.22140906](https://doi.org/10.5281/zenodo.22140906)
+[Data and code]*. Zenodo. [DOI: 10.5281/zenodo.22140905](https://doi.org/10.5281/zenodo.22140905)
 
 
 ## Data license
