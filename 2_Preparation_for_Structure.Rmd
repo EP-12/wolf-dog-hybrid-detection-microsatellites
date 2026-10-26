@@ -451,7 +451,7 @@ for (seed in seeds) {
 export_structure_dataset(gen_sorted, out_prefix)
 }
 ```
-2aii)  Italy - reduced sample size (100 per parental group) and simulated hybrids
+2aii)  Italy - simulate additional reference samples (so there are 100 per parental group) and hybrids
 
 ```{r}
 # ============================================================
