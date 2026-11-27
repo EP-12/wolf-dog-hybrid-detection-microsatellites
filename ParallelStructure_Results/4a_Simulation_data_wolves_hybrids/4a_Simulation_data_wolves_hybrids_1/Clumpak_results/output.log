@@ -1,68 +1,111 @@
-Wed Jun 24 18:04:08 2026: Job 1782295439 started running.
-Wed Jun 24 18:04:08 2026: Job Parameters:
-Wed Jun 24 18:04:08 2026: Input file: 1782295439.zip
-Wed Jun 24 18:04:08 2026: Input type: STRUCTURE
-Wed Jun 24 18:04:08 2026: Labels file: 1782295439.lab
-Wed Jun 24 18:04:08 2026: CLUMPP repeats: 2000
-Wed Jun 24 18:04:08 2026: CLUMPP search method: LargeKGreedy 
-Wed Jun 24 18:04:08 2026: MCL cluster size threshold: 0.1 (default)
-Wed Jun 24 18:04:08 2026: Extracting file: "1782295439.zip".
-Wed Jun 24 18:04:08 2026: Sorting input files by K
-Wed Jun 24 18:04:10 2026: Working on K=4
-Wed Jun 24 18:04:10 2026: Executing CLUMPP for K=4.
-Wed Jun 24 18:04:34 2026: Clustering K=4 with mcl.
-Wed Jun 24 18:04:34 2026: cutoff used: 0.64
-Wed Jun 24 18:04:34 2026: Executing CLUMPP for major cluster.
-Wed Jun 24 18:04:43 2026: Calculating major cluster LnProb mean and standard deviation.
-Wed Jun 24 18:04:43 2026: LnProb mean: -258541.9
-Wed Jun 24 18:04:43 2026: LnProb standard deviation: 324.502126341272
-Wed Jun 24 18:04:43 2026: Executing CLUMPP for minor clusters.
-Wed Jun 24 18:04:47 2026: Calculating MinorCluster1 LnProb mean and standard deviation.
-Wed Jun 24 18:04:47 2026: LnProb mean: -257734.1
-Wed Jun 24 18:04:47 2026: LnProb standard deviation: 0.989949493657051
-Wed Jun 24 18:04:47 2026: Working on K=5
-Wed Jun 24 18:04:47 2026: Executing CLUMPP for K=5.
-Wed Jun 24 18:05:22 2026: Clustering K=5 with mcl.
-Wed Jun 24 18:05:22 2026: cutoff used: 0.65
-Wed Jun 24 18:05:22 2026: Executing CLUMPP for major cluster.
-Wed Jun 24 18:05:34 2026: Calculating major cluster LnProb mean and standard deviation.
-Wed Jun 24 18:05:34 2026: LnProb mean: -249844.666666667
-Wed Jun 24 18:05:34 2026: LnProb standard deviation: 8.11439050905287
-Wed Jun 24 18:05:34 2026: Executing CLUMPP for minor clusters.
-Wed Jun 24 18:05:40 2026: Calculating MinorCluster1 LnProb mean and standard deviation.
-Wed Jun 24 18:05:40 2026: LnProb mean: -250911.2
-Wed Jun 24 18:05:40 2026: LnProb standard deviation: 0.565685424961586
-Wed Jun 24 18:05:40 2026: Working on K=6
-Wed Jun 24 18:05:40 2026: Executing CLUMPP for K=6.
-Wed Jun 24 18:06:29 2026: Clustering K=6 with mcl.
-Wed Jun 24 18:06:29 2026: no cutoff was used
-Wed Jun 24 18:06:29 2026: Executing CLUMPP for major cluster.
-Wed Jun 24 18:07:17 2026: Calculating major cluster LnProb mean and standard deviation.
-Wed Jun 24 18:07:17 2026: LnProb mean: -244659.8
-Wed Jun 24 18:07:17 2026: LnProb standard deviation: 3.34065861770341
-Wed Jun 24 18:07:17 2026: Working on K=7
-Wed Jun 24 18:07:17 2026: Executing CLUMPP for K=7.
-Wed Jun 24 18:08:22 2026: Clustering K=7 with mcl.
-Wed Jun 24 18:08:22 2026: cutoff used: 0.71
-Wed Jun 24 18:08:22 2026: Executing CLUMPP for major cluster.
-Wed Jun 24 18:09:27 2026: Calculating major cluster LnProb mean and standard deviation.
-Wed Jun 24 18:09:27 2026: LnProb mean: -244100.58
-Wed Jun 24 18:09:27 2026: LnProb standard deviation: 320.068987876051
-Wed Jun 24 18:09:27 2026: Ordering clusters by size for K=4
-Wed Jun 24 18:09:27 2026: Calling distruct for K=4.MajorCluster
-Wed Jun 24 18:09:29 2026: Calculating best Average Distance between K=4 and K=5..
-Wed Jun 24 18:09:36 2026: Calling distruct for K=5.MajorCluster
-Wed Jun 24 18:09:38 2026: Calculating best Average Distance between K=5 and K=6..
-Wed Jun 24 18:10:26 2026: Calling distruct for K=6.MajorCluster
-Wed Jun 24 18:10:28 2026: Calculating best Average Distance between K=6 and K=7..
-Wed Jun 24 18:18:09 2026: Calling distruct for K=7.MajorCluster
-Wed Jun 24 18:18:10 2026: Calculating best Average Distance between large cluster and K=4.MinorCluster1..
-Wed Jun 24 18:18:12 2026: Calling distruct for K=4.MinorCluster1
-Wed Jun 24 18:18:13 2026: Calculating best Average Distance between large cluster and K=5.MinorCluster1..
-Wed Jun 24 18:18:18 2026: Calling distruct for K=5.MinorCluster1
-Wed Jun 24 18:18:19 2026: Creating job summary PDF
-Wed Jun 24 18:18:19 2026: Creating job summary PDF for K=4
-Wed Jun 24 18:18:19 2026: Creating job summary PDF for K=5
-Wed Jun 24 18:18:19 2026: Creating job summary PDF for K=6
-Wed Jun 24 18:18:19 2026: Creating job summary PDF for K=7
-Wed Jun 24 18:18:19 2026: Creating job zip file
+Mon Nov  2 20:07:52 2026: Job 1793621252 started running.
+Mon Nov  2 20:07:52 2026: Job Parameters:
+Mon Nov  2 20:07:52 2026: Input file: 1793621252.zip
+Mon Nov  2 20:07:52 2026: Input type: STRUCTURE
+Mon Nov  2 20:07:52 2026: Labels file: 1793621252.lab
+Mon Nov  2 20:07:52 2026: CLUMPP repeats: 2000
+Mon Nov  2 20:07:52 2026: CLUMPP search method: LargeKGreedy 
+Mon Nov  2 20:07:52 2026: MCL cluster size threshold: 0.1 (default)
+Mon Nov  2 20:07:52 2026: Extracting file: "1793621252.zip".
+Mon Nov  2 20:07:52 2026: Sorting input files by K
+Mon Nov  2 20:07:56 2026: Working on K=1
+Mon Nov  2 20:07:57 2026: Executing CLUMPP for K=1.
+Mon Nov  2 20:07:57 2026: Clustering K=1 with mcl.
+Mon Nov  2 20:07:57 2026: no cutoff was used
+Mon Nov  2 20:07:57 2026: Executing CLUMPP for major cluster.
+Mon Nov  2 20:07:58 2026: Calculating major cluster LnProb mean and standard deviation.
+Mon Nov  2 20:07:58 2026: LnProb mean: -298139.68
+Mon Nov  2 20:07:58 2026: LnProb standard deviation: 0.178885438199007
+Mon Nov  2 20:07:58 2026: Working on K=2
+Mon Nov  2 20:07:58 2026: Executing CLUMPP for K=2.
+Mon Nov  2 20:08:11 2026: Clustering K=2 with mcl.
+Mon Nov  2 20:08:11 2026: cutoff used: 0.51
+Mon Nov  2 20:08:11 2026: Executing CLUMPP for major cluster.
+Mon Nov  2 20:08:23 2026: Calculating major cluster LnProb mean and standard deviation.
+Mon Nov  2 20:08:23 2026: LnProb mean: -283775.58
+Mon Nov  2 20:08:23 2026: LnProb standard deviation: 438.393216188381
+Mon Nov  2 20:08:23 2026: Working on K=3
+Mon Nov  2 20:08:23 2026: Executing CLUMPP for K=3.
+Mon Nov  2 20:08:49 2026: Clustering K=3 with mcl.
+Mon Nov  2 20:08:49 2026: cutoff used: 0.53
+Mon Nov  2 20:08:49 2026: Executing CLUMPP for major cluster.
+Mon Nov  2 20:08:58 2026: Calculating major cluster LnProb mean and standard deviation.
+Mon Nov  2 20:08:58 2026: LnProb mean: -272343.9
+Mon Nov  2 20:08:58 2026: LnProb standard deviation: 218.10563954195
+Mon Nov  2 20:08:58 2026: Executing CLUMPP for minor clusters.
+Mon Nov  2 20:09:03 2026: Calculating MinorCluster1 LnProb mean and standard deviation.
+Mon Nov  2 20:09:03 2026: LnProb mean: -271057.6
+Mon Nov  2 20:09:03 2026: LnProb standard deviation: 1.27279220612755
+Mon Nov  2 20:09:03 2026: Working on K=4
+Mon Nov  2 20:09:03 2026: Executing CLUMPP for K=4.
+Mon Nov  2 20:09:45 2026: Clustering K=4 with mcl.
+Mon Nov  2 20:09:45 2026: cutoff used: 0.66
+Mon Nov  2 20:09:45 2026: Executing CLUMPP for major cluster.
+Mon Nov  2 20:10:27 2026: Calculating major cluster LnProb mean and standard deviation.
+Mon Nov  2 20:10:27 2026: LnProb mean: -261676.34
+Mon Nov  2 20:10:27 2026: LnProb standard deviation: 308.90006960182
+Mon Nov  2 20:10:27 2026: Working on K=5
+Mon Nov  2 20:10:27 2026: Executing CLUMPP for K=5.
+Mon Nov  2 20:11:30 2026: Clustering K=5 with mcl.
+Mon Nov  2 20:11:30 2026: cutoff used: 0.65
+Mon Nov  2 20:11:30 2026: Executing CLUMPP for major cluster.
+Mon Nov  2 20:11:53 2026: Calculating major cluster LnProb mean and standard deviation.
+Mon Nov  2 20:11:53 2026: LnProb mean: -255083.8
+Mon Nov  2 20:11:53 2026: LnProb standard deviation: 2.77308492477377
+Mon Nov  2 20:11:53 2026: Executing CLUMPP for minor clusters.
+Mon Nov  2 20:12:03 2026: Calculating MinorCluster1 LnProb mean and standard deviation.
+Mon Nov  2 20:12:03 2026: LnProb mean: -253901.15
+Mon Nov  2 20:12:03 2026: LnProb standard deviation: 3.46482322780997
+Mon Nov  2 20:12:03 2026: Working on K=6
+Mon Nov  2 20:12:04 2026: Executing CLUMPP for K=6.
+Mon Nov  2 20:13:29 2026: Clustering K=6 with mcl.
+Mon Nov  2 20:13:29 2026: no cutoff was used
+Mon Nov  2 20:13:29 2026: Executing CLUMPP for major cluster.
+Mon Nov  2 20:14:56 2026: Calculating major cluster LnProb mean and standard deviation.
+Mon Nov  2 20:14:56 2026: LnProb mean: -249072.48
+Mon Nov  2 20:14:56 2026: LnProb standard deviation: 3.47951145995904
+Mon Nov  2 20:14:56 2026: Working on K=7
+Mon Nov  2 20:14:56 2026: Executing CLUMPP for K=7.
+Mon Nov  2 20:16:51 2026: Clustering K=7 with mcl.
+Mon Nov  2 20:16:51 2026: cutoff used: 0.70
+Mon Nov  2 20:16:51 2026: Executing CLUMPP for major cluster.
+Mon Nov  2 20:18:46 2026: Calculating major cluster LnProb mean and standard deviation.
+Mon Nov  2 20:18:46 2026: LnProb mean: -248354.06
+Mon Nov  2 20:18:46 2026: LnProb standard deviation: 253.103788987837
+Mon Nov  2 20:18:46 2026: Working on K=8
+Mon Nov  2 20:18:47 2026: Executing CLUMPP for K=8.
+Mon Nov  2 20:21:12 2026: Clustering K=8 with mcl.
+Mon Nov  2 20:21:12 2026: cutoff used: 0.68
+Mon Nov  2 20:21:12 2026: Executing CLUMPP for major cluster.
+Mon Nov  2 20:23:38 2026: Calculating major cluster LnProb mean and standard deviation.
+Mon Nov  2 20:23:38 2026: LnProb mean: -247520.5
+Mon Nov  2 20:23:38 2026: LnProb standard deviation: 253.837713903984
+Mon Nov  2 20:23:38 2026: Calling distruct for K=1.MajorCluster
+Mon Nov  2 20:23:41 2026: Calculating best Average Distance between K=1 and K=2..
+Mon Nov  2 20:23:41 2026: Calling distruct for K=2.MajorCluster
+Mon Nov  2 20:23:44 2026: Calculating best Average Distance between K=2 and K=3..
+Mon Nov  2 20:23:44 2026: Calling distruct for K=3.MajorCluster
+Mon Nov  2 20:23:47 2026: Calculating best Average Distance between K=3 and K=4..
+Mon Nov  2 20:23:49 2026: Calling distruct for K=4.MajorCluster
+Mon Nov  2 20:23:52 2026: Calculating best Average Distance between K=4 and K=5..
+Mon Nov  2 20:24:05 2026: Calling distruct for K=5.MajorCluster
+Mon Nov  2 20:24:08 2026: Calculating best Average Distance between K=5 and K=6..
+Mon Nov  2 20:25:30 2026: Calling distruct for K=6.MajorCluster
+Mon Nov  2 20:25:34 2026: Calculating best Average Distance between K=6 and K=7..
+Mon Nov  2 20:37:11 2026: Calling distruct for K=7.MajorCluster
+Mon Nov  2 20:37:14 2026: Calculating best Average Distance between K=7 and K=8..
+Mon Nov  2 22:29:38 2026: Calling distruct for K=8.MajorCluster
+Mon Nov  2 22:29:40 2026: Calculating best Average Distance between large cluster and K=3.MinorCluster1..
+Mon Nov  2 22:29:40 2026: Calling distruct for K=3.MinorCluster1
+Mon Nov  2 22:29:41 2026: Calculating best Average Distance between large cluster and K=5.MinorCluster1..
+Mon Nov  2 22:29:46 2026: Calling distruct for K=5.MinorCluster1
+Mon Nov  2 22:29:47 2026: Creating job summary PDF
+Mon Nov  2 22:29:47 2026: Creating job summary PDF for K=1
+Mon Nov  2 22:29:47 2026: Creating job summary PDF for K=2
+Mon Nov  2 22:29:47 2026: Creating job summary PDF for K=3
+Mon Nov  2 22:29:48 2026: Creating job summary PDF for K=4
+Mon Nov  2 22:29:48 2026: Creating job summary PDF for K=5
+Mon Nov  2 22:29:48 2026: Creating job summary PDF for K=6
+Mon Nov  2 22:29:48 2026: Creating job summary PDF for K=7
+Mon Nov  2 22:29:48 2026: Creating job summary PDF for K=8
+Mon Nov  2 22:29:48 2026: Creating job zip file

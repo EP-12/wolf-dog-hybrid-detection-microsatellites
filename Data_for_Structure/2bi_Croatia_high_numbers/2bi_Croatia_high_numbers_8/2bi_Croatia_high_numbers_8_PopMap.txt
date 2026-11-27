@@ -1057,7 +1057,6 @@ HRV00P	W-Croatia
 HRV01J	W-Croatia
 HRV026	W-Croatia
 HRV02C	W-Croatia
-HRV031	W-Croatia
 HRV033	W-Croatia
 HRV05L	W-Croatia
 HRV06A	W-Croatia
@@ -1259,7 +1258,6 @@ HRV1EK	W-Croatia
 HRV001	W-Croatia
 HRV00H	W-Croatia
 HRV00K	W-Croatia
-HRV01X	W-Croatia
 HRV025	W-Croatia
 HRV028	W-Croatia
 HRV041	W-Croatia
@@ -1548,3 +1546,5 @@ h2571	Sim-W-Croatia
 h2581	Sim-W-Croatia
 h2591	Sim-W-Croatia
 h2601	Sim-W-Croatia
+h2611	Sim-W-Croatia
+h2621	Sim-W-Croatia

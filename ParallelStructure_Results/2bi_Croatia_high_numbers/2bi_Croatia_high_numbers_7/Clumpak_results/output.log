@@ -1,23 +1,23 @@
-Wed Jun 24 17:24:26 2026: Job 1782293065 started running.
-Wed Jun 24 17:24:26 2026: Job Parameters:
-Wed Jun 24 17:24:26 2026: Input file: 1782293065.zip
-Wed Jun 24 17:24:26 2026: Input type: STRUCTURE
-Wed Jun 24 17:24:26 2026: Labels file: 1782293065.lab
-Wed Jun 24 17:24:26 2026: CLUMPP repeats: 2000
-Wed Jun 24 17:24:26 2026: CLUMPP search method: LargeKGreedy 
-Wed Jun 24 17:24:26 2026: MCL cluster size threshold: 0.1 (default)
-Wed Jun 24 17:24:26 2026: Extracting file: "1782293065.zip".
-Wed Jun 24 17:24:26 2026: Sorting input files by K
-Wed Jun 24 17:24:27 2026: Working on K=2
-Wed Jun 24 17:24:27 2026: Executing CLUMPP for K=2.
-Wed Jun 24 17:24:28 2026: Clustering K=2 with mcl.
-Wed Jun 24 17:24:28 2026: no cutoff was used
-Wed Jun 24 17:24:28 2026: Executing CLUMPP for major cluster.
-Wed Jun 24 17:24:29 2026: Calculating major cluster LnProb mean and standard deviation.
-Wed Jun 24 17:24:29 2026: LnProb mean: -115597.06
-Wed Jun 24 17:24:29 2026: LnProb standard deviation: 0.397492138283814
-Wed Jun 24 17:24:29 2026: Ordering clusters by size for K=2
-Wed Jun 24 17:24:29 2026: Calling distruct for K=2.MajorCluster
-Wed Jun 24 17:24:29 2026: Creating job summary PDF
-Wed Jun 24 17:24:29 2026: Creating job summary PDF for K=2
-Wed Jun 24 17:24:29 2026: Creating job zip file
+Wed Oct 28 16:15:06 2026: Job 1793175304 started running.
+Wed Oct 28 16:15:06 2026: Job Parameters:
+Wed Oct 28 16:15:06 2026: Input file: 1793175304.zip
+Wed Oct 28 16:15:06 2026: Input type: STRUCTURE
+Wed Oct 28 16:15:06 2026: Labels file: 1793175304.lab
+Wed Oct 28 16:15:06 2026: CLUMPP repeats: 2000
+Wed Oct 28 16:15:06 2026: CLUMPP search method: LargeKGreedy 
+Wed Oct 28 16:15:06 2026: MCL cluster size threshold: 0.1 (default)
+Wed Oct 28 16:15:06 2026: Extracting file: "1793175304.zip".
+Wed Oct 28 16:15:07 2026: Sorting input files by K
+Wed Oct 28 16:15:07 2026: Working on K=2
+Wed Oct 28 16:15:07 2026: Executing CLUMPP for K=2.
+Wed Oct 28 16:15:09 2026: Clustering K=2 with mcl.
+Wed Oct 28 16:15:09 2026: no cutoff was used
+Wed Oct 28 16:15:09 2026: Executing CLUMPP for major cluster.
+Wed Oct 28 16:15:12 2026: Calculating major cluster LnProb mean and standard deviation.
+Wed Oct 28 16:15:12 2026: LnProb mean: -115819.58
+Wed Oct 28 16:15:12 2026: LnProb standard deviation: 1.06630202100555
+Wed Oct 28 16:15:12 2026: Ordering clusters by size for K=2
+Wed Oct 28 16:15:12 2026: Calling distruct for K=2.MajorCluster
+Wed Oct 28 16:15:13 2026: Creating job summary PDF
+Wed Oct 28 16:15:13 2026: Creating job summary PDF for K=2
+Wed Oct 28 16:15:13 2026: Creating job zip file

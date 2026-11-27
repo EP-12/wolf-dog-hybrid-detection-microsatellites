@@ -1,4 +1,4 @@
-# Caveats and limits of microsatellite-based hybrid detection in structured populations: Example from wolf-dog hybridisation in the Northern Dinaric mountains
+# Caveats and limits of microsatellite-based hybrid detection in structured populations: an example from wolf-dog hybridisation in the Northern Dinaric Mountains
 
 ## Overview
 
@@ -7,13 +7,13 @@ This repository contains the data, R code, and analysis results associated with 
 > Pavlovič, E., Birkenhain, C. S., Boljte, B., Ćirović, D., De Barba, M., Djan, M., Hristov, H., 
 Iosif, R., Konec, M., Kusak, J., Marucco, F., Nowak, C., Pazhenkova, E., Promberger–Fürpass, B., 
 Stronen, A. V., Šnjegota, D., Tsingarska, E., & Skrbinšek, T. *Caveats and limits of 
-microsatellite-based hybrid detection in structured populations: example from wolf-dog 
-hybridisation in the Northern Dinaric mountains.*
+microsatellite-based hybrid detection in structured populations: an example from wolf-dog 
+hybridisation in the Northern Dinaric Mountains.*
 
 The repository contains the empirical genetic dataset, sample metadata, R scripts used 
 to perform the analyses, and the resulting analysis outputs.
 
-The repository is archived on Zenodo.
+The repository is archived on Zenodo: "10.5281/zenodo.22140905".
 
 ## Citation
 
@@ -35,15 +35,17 @@ Pavlovič, E., Birkenhain, C. S., Boljte, B., Ćirović, D., De Barba, M., Djan,
 Hristov, H., Iosif, R., Konec, M., Kusak, J., Marucco, F., Nowak, C., Pazhenkova, E.,
 Promberger–Fürpass, B., Stronen, A. V., Šnjegota, D., Tsingarska, E., & Skrbinšek, T. 
 (Manuscript under review). *Caveats and limits of microsatellite-based hybrid 
-detection in structured populations: example from wolf-dog hybridisation in the 
-Northern Dinaric mountains.*
+detection in structured populations: an example from wolf-dog hybridisation in the 
+Northern Dinaric Mountains.*
 
 ### Dataset and code
 
 Pavlovič, E., Birkenhain, C. S., Boljte, B., Ćirović, D., De Barba, M., Djan, M., 
 Hristov, H., Iosif, R., Konec, M., Kusak, J., Marucco, F., Nowak, C., Pazhenkova, E.,
 Promberger–Fürpass, B., Stronen, A. V., Šnjegota, D., Tsingarska, E., & Skrbinšek, T.
-(2026). *[Zenodo dataset title]*. Zenodo.
+(2026). *Caveats and limits of microsatellite-based hybrid detection in structured 
+populations: an example from wolf-dog hybridisation in the Northern Dinaric Mountains 
+[Data and code]*. Zenodo. [DOI: 10.5281/zenodo.22140905](https://doi.org/10.5281/zenodo.22140905)
 
 
 ## Data license
@@ -81,7 +83,7 @@ resulting files are provided in the repository. The analyses can nevertheless
 be rerun using the provided data and code, or the scripts can be adapted to
 analyse a different dataset.
 
-
+```text
 ├── Data/
 │   └── Sample_data.xlsx
 │
@@ -104,7 +106,7 @@ analyse a different dataset.
 ├── LICENSE_DATA
 │
 └── CITATION.cff
-
+```
 
 ---
 
@@ -171,7 +173,7 @@ The scripts should be executed in the following order.
 Script:
 
 
-1_Data_exploration.Rmd
+`1_Data_exploration.Rmd`
 
 
 This script imports the microsatellite dataset and performs exploratory analyses.
@@ -186,7 +188,7 @@ Analyses include:
 
 The resulting R outputs are saved in:
 
-Results_of_data_exploration/
+`Results_of_data_exploration/`
 
 ---
 
@@ -195,7 +197,7 @@ Results_of_data_exploration/
 Script:
 
 
-2_Preparation_for_Structure.Rmd
+`2_Preparation_for_Structure.Rmd`
 
 
 This script prepares datasets for STRUCTURE analyses.
@@ -212,7 +214,7 @@ The script includes:
 The resulting STRUCTURE input files are saved in:
 
 
-Data_for_Structure/
+`Data_for_Structure/`
 
 
 Each analysis has its own folder containing the required input files for STRUCTURE.
@@ -224,7 +226,7 @@ Each analysis has its own folder containing the required input files for STRUCTU
 Script:
 
 
-3_Joblists_for_Structure.Rmd
+`3_Joblists_for_Structure.Rmd`
 
 
 This script generates joblist files required for running STRUCTURE analyses using 
@@ -238,7 +240,7 @@ The joblists specify:
 - K values,
 - analysis parameters.
 
-By default, the joblists are written to Data_for_Structure/Joblists. Before running 
+By default, the joblists are written to `Data_for_Structure/Joblists`. Before running 
 STRUCTURE, the relevant joblist must be copied or moved to the corresponding 
 analysis directory containing the STRUCTURE input files. The default can also be
 changed so that the joblists are saved in the preferred folder.
@@ -249,7 +251,7 @@ changed so that the joblists are saved in the preferred folder.
 
 Script:
 
-4_Run_Parallel_Structure.Rmd
+`4_Run_Parallel_Structure.Rmd`
 
 
 This script runs STRUCTURE analyses using the `ParallelStructure` R package.
@@ -268,7 +270,7 @@ with their own data.
 STRUCTURE output files are saved in:
 
 
-ParallelStructure_Results/
+`ParallelStructure_Results/`
 
 
 ---
@@ -278,7 +280,7 @@ ParallelStructure_Results/
 Script:
 
 
-5_Analyses_after_Structure.Rmd
+`5_Analyses_after_Structure.Rmd`
 
 Before running this script, STRUCTURE replicate results must be processed using 
 CLUMPAK (e.g. I used online tool StructureSelector, which can also run CLUMPAK
@@ -296,12 +298,16 @@ thresholds of Q_Dog value,
 - clustering samples into different groups according to the thresholds,
 - visualizing thresholds (density plot) and assignment results (heatmap),
 - calculating the accuracy of hybrid classifications,
+- calculating false negative rates (FNR) and false positive rates (FPR)
+- comparing analyses
 - generating tables and figures.
 
 The resulting R outputs are saved in:
 
 
-R_results/
+`R_results/`
+or
+`Comparison/`
 
 
 It contains outputs from the downstream R analyses and is located in the main 
@@ -314,7 +320,7 @@ directory of each analysis, alongside the simulation replicate folders.
 The folder:
 
 
-ParallelStructure_Results/
+`ParallelStructure_Results/`
 
 
 contains the results of STRUCTURE runs, CLUMPAK analyses, and associated outputs.
@@ -324,36 +330,36 @@ using different random seeds.
 
 Example:
 
-
+```text
 ParallelStructure_Results/
-└── 1c_NDinaric_empirical_Sim_dog/
+├── ...
+├── 1c_NDinaric_empirical_Sim_dog/
   │
   ├── 1c_NDinaric_empirical_Sim_dog_1/
-  ├── 1c_NDinaric_empirical_Sim_dog_2/
-  ├── ...
-  ├── 1c_NDinaric_empirical_Sim_dog_10/
+  ├── 1c_NDinaric_empirical_Sim_dog_2/  
+  ├── ...  
+  ├── 1c_NDinaric_empirical_Sim_dog_10/  
   └── R_results/
+├── ...
+└── Comparison/
+```  
 
 Each replicate folder contains:
 
-
+```text
 1c_NDinaric_empirical_Sim_dog_1/
-  │
-  ├── output files of 2_preparation_for_Structure.Rmd (1c_NDinaric_empirical_Sim_dog_1.txt, 1c_NDinaric_empirical_Sim_dog_1_POP.txt, 1c_NDinaric_empirical_Sim_dog_1_PopMap.txt)
-  │
-  ├── output files of 3_joblists_for_Structure.Rmd (joblist_1c_1.txt)
-  │
-  ├── output files of ParallelStructure
-  │
+  ├── output files of 2_preparation_for_Structure.Rmd (1c_NDinaric_empirical_Sim_dog_1.txt, 1c_NDinaric_empirical_Sim_dog_1_POP.txt, 1c_NDinaric_empirical_Sim_dog_1_PopMap.txt)  
+  ├── output files of 3_joblists_for_Structure.Rmd (joblist_1c_1.txt)  
+  ├── output files of ParallelStructure  
   └── Clumpak_results/ 
-
-  
+```  
   
 The `Clumpak_results` folder contains processed STRUCTURE results generated by 
 CLUMPAK.
 
 The `R_results` folder contains outputs generated by: 5_Analyses_after_Structure.Rmd
 including processed data tables, figures, and statistical summaries.
+The `Comparison/` folder contains FNR and FPR plots and comparisons between analyses.
 
 ---
 
@@ -368,6 +374,7 @@ The analyses require several R packages, including:
 - readxl
 - openxlsx
 - pegas
+- patchwork
 - ParallelStructure (run on Linux)
 
 ### Additional software

@@ -71,7 +71,7 @@ make_joblist(
   Kmax     = 3,
   nRep     = 5,
   burnin   = 300000,
-  mcmc     = 3000000,
+  mcmc     = 1500000,
   jobPrefix= "A",
   outFile  = "joblist_1a.txt",
   outDir   = "Data_for_Structure/Joblists" #Move file to correct folders for the STRUCTURE analyses.
@@ -92,7 +92,7 @@ for (i in 1:10) {
     Kmax      = 7,
     nRep      = 5,
     burnin    = 300000,
-    mcmc      = 3000000,
+    mcmc      = 1500000,
     jobPrefix = paste0("H", i, "_"),
     outFile   = paste0("joblist_4_", i, ".txt"),
     outDir    = "Data_for_Structure/Joblists" #Move files to correct folders for the STRUCTURE analyses.

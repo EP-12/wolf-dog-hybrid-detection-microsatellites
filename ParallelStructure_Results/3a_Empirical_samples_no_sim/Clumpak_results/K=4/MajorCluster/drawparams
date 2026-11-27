@@ -34,7 +34,7 @@ Figure appearance
 #define DIST_ABOVE 5	// (d) distance above plot to place text
 #define DIST_BELOW -7	// (d) distance below plot to place text
 #define BOXHEIGHT  50	// (d) height of the figure
-#define INDIVWIDTH 0.630727762803235	// (d) width of an individual
+#define INDIVWIDTH 0.593908629441624	// (d) width of an individual
 
 #define ORIENTATION 0	     // (int) 0 for horizontal orientation (default)
 			     //       1 for vertical orientation

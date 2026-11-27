@@ -5,7 +5,9 @@ the associated publication and the archived Zenodo dataset."
 
 title: >
   Caveats and limits of microsatellite-based hybrid detection in structured
-  populations: example from wolf-dog hybridisation in the Northern Dinaric mountains
+  populations: an example from wolf-dog hybridisation in the Northern Dinaric Mountains
+
+doi: "10.5281/zenodo.22140905"
 
 type: dataset
 
@@ -47,4 +49,4 @@ authors:
   - family-names: "Skrbinšek"
     given-names: "Tomaž"
 
-date-released: "2026-08-27"
+date-released: "2026-11-27"

@@ -451,7 +451,7 @@ for (seed in seeds) {
 export_structure_dataset(gen_sorted, out_prefix)
 }
 ```
-2aii)  Italy - reduced sample size (100 per parental group) and simulated hybrids
+2aii)  Italy - simulate additional reference samples (so there are 100 per parental group) and hybrids
 
 ```{r}
 # ============================================================
@@ -501,7 +501,7 @@ for (seed in seeds) {
   # ------------------------------------------------------------
 
   pop_list <- list(
-    list(name = "W-Italy",  n = 72, new_pop = "Sim-W-Italy")
+    list(name = "W-Italy",  n = 46, new_pop = "Sim-W-Italy")
   )
 
   # ------------------------------------------------------------
@@ -662,7 +662,7 @@ for (seed in seeds) {
 
   pop_list <- list(
     list(name = "Dog",      n = 400, new_pop = "Sim-dog"),
-    list(name = "W-Croatia",  n = 260, new_pop = "Sim-W-Croatia")
+    list(name = "W-Croatia",  n = 262, new_pop = "Sim-W-Croatia")
   )
 
   # ------------------------------------------------------------
@@ -823,7 +823,7 @@ for (seed in seeds) {
 
   pop_list <- list(
     list(name = "Dog",      n = 400, new_pop = "Sim-dog"),
-    list(name = "W-Italy",  n = 472, new_pop = "Sim-W-Italy")
+    list(name = "W-Italy",  n = 446, new_pop = "Sim-W-Italy")
   )
 
   # ------------------------------------------------------------
@@ -1272,4 +1272,5 @@ if (length(unknown) > 0) {
 export_structure_dataset(gen_sorted, out_prefix)
 }
 ```
+
 

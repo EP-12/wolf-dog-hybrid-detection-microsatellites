@@ -71,14 +71,140 @@ s.class(x.pca$li, pop(gendata_PCA), col = hybridpal()(16))
 
 
 ```
+Calculating eigenvalues
+```{r}
+# Eigenvalues
+eigenvalues <- x.pca$eig
+
+# Percentage of variance explained
+explained_variance <- eigenvalues / sum(eigenvalues) * 100
+
+# Cumulative percentage
+cumulative_variance <- cumsum(explained_variance)
+
+# Combine into a table
+PCA_variance <- data.frame(
+  PC = paste0("PC", seq_along(eigenvalues)),
+  Eigenvalue = eigenvalues,
+  Explained_variance = explained_variance,
+  Cumulative_variance = cumulative_variance
+)
+
+PCA_variance
+```
+
+Save the above figure with explained variance
+```{r}
+png(
+  "Results_of_data_exploration/PCA_all_3a.png",
+  width = 12,
+  height = 12,
+  units = "cm",
+  res = 600
+)
+
+# Calculate percentages
+pc1 <- round(explained_variance[1], 1)
+pc2 <- round(explained_variance[2], 1)
+
+# PCA plot
+s.class(
+  x.pca$li,
+  pop(gendata_PCA),
+  col = hybridpal()(16),
+  xax = 1,
+  yax = 2
+)
+
+# Add axis labels
+title(
+  xlab = paste0("PC1 (", pc1, "%)"),
+  ylab = paste0("PC2 (", pc2, "%)")
+)
+
+dev.off()
+```
+Make a plot with the first 10 eigenvalues
+```{r}
+# First 10 eigenvalues
+eigenvalues <- x.pca$eig[1:10]
+
+# Explained variance
+explained_variance <- eigenvalues / sum(x.pca$eig) * 100
+
+# Scree plot
+bp <- barplot(
+  eigenvalues,
+  names.arg = paste0("PC", 1:10),
+  xlab = "Principal component",
+  ylab = "Eigenvalue",
+  main = "PCA eigenvalues",
+  col = "grey80",
+  border = "grey40",
+  ylim = c(0, max(eigenvalues) * 1.2),
+  yaxt = "n"
+)
+
+# Add complete y-axis
+axis(
+  side = 2,
+  at = pretty(c(0, max(eigenvalues) * 1.2))
+)
+
+# Add explained variance labels
+text(
+  x = bp,
+  y = eigenvalues,
+  labels = paste0(round(explained_variance, 1), "%"),
+  pos = 3,
+  cex = 0.8
+)
+
+box()
+```
+Save a plane figure with 10 eigenvalues
+```{r}
+# First 10 eigenvalues
+eigenvalues <- x.pca$eig[1:10]
+
+# Explained variance
+explained_variance <- eigenvalues / sum(x.pca$eig) * 100
+
+png("Results_of_data_exploration/PCA_all_3a_eigenvalues.png",
+    width = 10, height = 10, units = "cm", res = 300)
+
+# Scree plot
+bp <- barplot(
+  eigenvalues,
+  col = "grey80",
+  border = "grey40",
+  ylim = c(0, max(eigenvalues) * 1.2),
+  axes = FALSE
+)
+
+# Add y-axis tick marks and labels, without axis line
+axis(
+  side = 2,
+  at = c(0, 1, 2),
+  labels = c(0, 1, 2),
+  las = 1,
+  lwd = 0,
+  lwd.ticks = 0.7,
+  cex.axis = 0.8
+)
+
+
+dev.off()
+```
 b) Only dog and wolf samples (no hybrids)
 ```{r}
 gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog", "W-Slovenia", "W-Croatia", "W-BIH", "W-Serbia", "W-Kosovo", "W-Montenegro", "W-N.Macedonia", "W-Bulgaria", "W-Italy", "W-Germany", "W-Romania")]
 
 x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
 s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(12))
-
 ```
+
+
 We see that with PCA we cannot  distinguish well between different (sub)populations. Because of this, for our analyses PCA is not useful to look at all the samples together. We will try comparing samples from only few or two (sub)populations.
 
 3.2. Comparison of different (sub)populations
@@ -90,9 +216,138 @@ With hybrid samples
 gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog", "F1","BC1w", "BC2w", "W-Slovenia", "W-Croatia")]
 
 x.pca <- dudi.pca(tab(gendata_Country, NA.method = "mean"), scannf = FALSE, scale = FALSE)
-s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(11))
+s.class(x.pca$li, pop(gendata_Country), col = hybridpal()(6))
 
 ```
+
+Calculating eigenvalues
+```{r}
+# Eigenvalues
+eigenvalues <- x.pca$eig
+
+# Percentage of variance explained
+explained_variance <- eigenvalues / sum(eigenvalues) * 100
+
+# Cumulative percentage
+cumulative_variance <- cumsum(explained_variance)
+
+# Combine into a table
+PCA_variance <- data.frame(
+  PC = paste0("PC", seq_along(eigenvalues)),
+  Eigenvalue = eigenvalues,
+  Explained_variance = explained_variance,
+  Cumulative_variance = cumulative_variance
+)
+
+PCA_variance
+```
+
+Save the above figure with explained variance
+```{r}
+png(
+  "Results_of_data_exploration/PCA_NS_1c.png",
+  width = 12,
+  height = 12,
+  units = "cm",
+  res = 600
+)
+
+# Calculate percentages
+pc1 <- round(explained_variance[1], 1)
+pc2 <- round(explained_variance[2], 1)
+
+# PCA plot
+s.class(
+  x.pca$li,
+  pop(gendata_Country),
+  col = hybridpal()(6),
+  xax = 1,
+  yax = 2
+)
+
+# Add axis labels
+title(
+  xlab = paste0("PC1 (", pc1, "%)"),
+  ylab = paste0("PC2 (", pc2, "%)")
+)
+
+dev.off()
+```
+
+Make a plot with the first 10 eigenvalues
+```{r}
+# First 10 eigenvalues
+eigenvalues <- x.pca$eig[1:10]
+
+# Explained variance
+explained_variance <- eigenvalues / sum(x.pca$eig) * 100
+
+# Scree plot
+bp <- barplot(
+  eigenvalues,
+  names.arg = paste0("PC", 1:10),
+  xlab = "Principal component",
+  ylab = "Eigenvalue",
+  main = "PCA eigenvalues",
+  col = "grey80",
+  border = "grey40",
+  ylim = c(0, max(eigenvalues) * 1.2),
+  yaxt = "n"
+)
+
+# Add complete y-axis
+axis(
+  side = 2,
+  at = pretty(c(0, max(eigenvalues) * 1.2))
+)
+
+# Add explained variance labels
+text(
+  x = bp,
+  y = eigenvalues,
+  labels = paste0(round(explained_variance, 1), "%"),
+  pos = 3,
+  cex = 0.8
+)
+
+box()
+```
+Save a plane figure with 10 eigenvalues
+```{r}
+# First 10 eigenvalues
+eigenvalues <- x.pca$eig[1:10]
+
+# Explained variance
+explained_variance <- eigenvalues / sum(x.pca$eig) * 100
+
+png("Results_of_data_exploration/PCA_ND_1c_eigenvalues.png",
+    width = 10, height = 10, units = "cm", res = 300)
+
+# Scree plot
+bp <- barplot(
+  eigenvalues,
+  col = "grey80",
+  border = "grey40",
+  ylim = c(0, max(eigenvalues) * 1.2),
+  axes = FALSE
+)
+
+# Add y-axis tick marks and labels, without axis line
+axis(
+  side = 2,
+  at = c(0, 1, 2, 3),
+  labels = c(0, 1, 2, 3),
+  las = 1,
+  lwd = 0,
+  lwd.ticks = 0.7,
+  cex.axis = 0.8
+)
+
+
+dev.off()
+```
+
+
 Without hybrid samples
 ```{r}
 gendata_Country <- gendata_PCA[pop(gendata_PCA) %in% c ("Dog",  "W-Slovenia", "W-Croatia")] 
@@ -802,6 +1057,5 @@ saveWorkbook(
   overwrite = TRUE
 )
 ```
-
 
 

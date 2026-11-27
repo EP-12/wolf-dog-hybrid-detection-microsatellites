@@ -1,16 +1,16 @@
 
 Using the parameter settings in the file: 
-''1782294585/clumpp.paramfile''
+''1793564830/clumpp.paramfile''
 
 Parameter settings
 ----------------------- Main parameters -------------------------
 DATATYPE = 0
-INDFILE = 1782294585/ClumppIndFile
+INDFILE = 1793564830/ClumppIndFile
 POPFILE = 
-OUTFILE = 1782294585/ClumppIndFile.output
-MISCFILE = 1782294585/ClumppIndFile.misc
+OUTFILE = 1793564830/ClumppIndFile.output
+MISCFILE = 1793564830/ClumppIndFile.misc
 K = 4
-C = 2142
+C = 2188
 R = 1
 M = 3
 W = 0

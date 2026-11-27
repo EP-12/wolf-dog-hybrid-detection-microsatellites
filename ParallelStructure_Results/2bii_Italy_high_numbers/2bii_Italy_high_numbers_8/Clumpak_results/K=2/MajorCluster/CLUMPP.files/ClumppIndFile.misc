@@ -1,14 +1,14 @@
 
 Using the parameter settings in the file: 
-''1782293509/clumpp.paramfile''
+''1793175504/clumpp.paramfile''
 
 Parameter settings
 ----------------------- Main parameters -------------------------
 DATATYPE = 0
-INDFILE = 1782293509/ClumppIndFile
+INDFILE = 1793175504/ClumppIndFile
 POPFILE = 
-OUTFILE = 1782293509/ClumppIndFile.output
-MISCFILE = 1782293509/ClumppIndFile.misc
+OUTFILE = 1793175504/ClumppIndFile.output
+MISCFILE = 1793175504/ClumppIndFile.misc
 K = 2
 C = 1500
 R = 5
@@ -35,22 +35,22 @@ In total, 2000 configurations of runs and clusters will be tested.
 
 Results
 ------------------------------
-The highest value of H' is: 0.99973286635454
+The highest value of H' is: 0.99968181316634
 
 The list of permutations of the clusters that produces that
 H' value is (runs are listed sequentially on separate rows)
 
 1 2 
-1 2 
 2 1 
-1 2 
-1 2 
+2 1 
+2 1 
+2 1 
 
 The pairwise G' values for each pair of runs where the clusters
 of each run are permuted according to the list of permutations above
 
-1.0000 0.9998 0.9997 0.9997 0.9997 
-0.9998 1.0000 0.9997 0.9997 0.9997 
+1.0000 0.9997 0.9997 0.9997 0.9997 
+0.9997 1.0000 0.9997 0.9997 0.9997 
 0.9997 0.9997 1.0000 0.9997 0.9997 
 0.9997 0.9997 0.9997 1.0000 0.9997 
 0.9997 0.9997 0.9997 0.9997 1.0000 

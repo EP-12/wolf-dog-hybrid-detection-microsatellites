@@ -167,7 +167,6 @@ MSV241	W-Slovenia
 MSV2A0	W-Slovenia
 MSV2A1	W-Slovenia
 MSV2A8	W-Slovenia
-DAM1P5	W-Slovenia
 M1084	W-Slovenia
 MSV2M4	W-Slovenia
 MSV2T6	W-Slovenia
@@ -185,7 +184,6 @@ M2E4H	W-Slovenia
 M2E65	W-Slovenia
 M2EEJ	W-Slovenia
 M2EEP	W-Slovenia
-MSV1TU	W-Slovenia
 MSV20M	W-Slovenia
 MSV223	W-Slovenia
 MSV22E	W-Slovenia
@@ -262,7 +260,6 @@ HRV00P	W-Croatia
 HRV01J	W-Croatia
 HRV026	W-Croatia
 HRV02C	W-Croatia
-HRV031	W-Croatia
 HRV033	W-Croatia
 HRV05L	W-Croatia
 HRV06A	W-Croatia
@@ -464,7 +461,6 @@ HRV1EK	W-Croatia
 HRV001	W-Croatia
 HRV00H	W-Croatia
 HRV00K	W-Croatia
-HRV01X	W-Croatia
 HRV025	W-Croatia
 HRV028	W-Croatia
 HRV041	W-Croatia

@@ -1,8 +1,23 @@
+K=1
+5/5				LnProb mean: -177435.740				Mean similarity score: 1.000
+K=2
+3/5				LnProb mean: -164876.300				Mean similarity score: 1.000
+1/5				LnProb mean: -167491.800				Mean similarity score: 0.000
+1/5				LnProb mean: -165799.100				Mean similarity score: 0.000
+K=3
+2/5				LnProb mean: -156440.000				Mean similarity score: 1.000
+2/5				LnProb mean: -157386.450				Mean similarity score: 1.000
+1/5				LnProb mean: -157262.000				Mean similarity score: 0.000
 K=4
-5/5				LnProb mean: -145160.960				Mean similarity score: 0.848
+4/5				LnProb mean: -148989.375				Mean similarity score: 1.000
+1/5				LnProb mean: -152024.700				Mean similarity score: 0.000
 K=5
-5/5				LnProb mean: -139928.180				Mean similarity score: 0.845
+3/5				LnProb mean: -143781.333				Mean similarity score: 0.999
+2/5				LnProb mean: -144648.050				Mean similarity score: 0.999
 K=6
-5/5				LnProb mean: -136339.760				Mean similarity score: 0.999
+5/5				LnProb mean: -140458.280				Mean similarity score: 0.999
 K=7
-5/5				LnProb mean: -135600.180				Mean similarity score: 0.739
+3/5				LnProb mean: -139855.633				Mean similarity score: 0.772
+2/5				LnProb mean: -139546.300				Mean similarity score: 0.999
+K=8
+5/5				LnProb mean: -139175.400				Mean similarity score: 0.650

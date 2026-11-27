@@ -59,7 +59,7 @@ if (!file.exists(infile)) {
     infile = infile,
     outpath = outpath,
     
-    numinds = 745,          # Number of individuals in the dataset. CHANGE to match your dataset.
+    numinds = 741,          # Number of individuals in the dataset. CHANGE to match your dataset.
     numloci = 20,            # Number of loci/markers. CHANGE to match your dataset.
     
     plot_output = 1,         # Generate STRUCTURE plot output.
@@ -156,7 +156,7 @@ if (!file.exists(infile)) {
     structure_path = structure_path,
     infile = infile,
     outpath = outpath,
-    numinds = 745,  #CHANGE to match your dataset.
+    numinds = 741,  #CHANGE to match your dataset.
     numloci = 20,  #CHANGE to match your dataset.
     plot_output = 1,
     label = 1,
@@ -213,7 +213,7 @@ structure_path <- "/path/to/Structure/"
     structure_path = structure_path,
     infile = infile,
     outpath = outpath,
-    numinds = 742,  #CHANGE to match your dataset.
+    numinds = 788,  #CHANGE to match your dataset.
     numloci = 20,  #CHANGE to match your dataset.
     plot_output = 1,
     label = 1,

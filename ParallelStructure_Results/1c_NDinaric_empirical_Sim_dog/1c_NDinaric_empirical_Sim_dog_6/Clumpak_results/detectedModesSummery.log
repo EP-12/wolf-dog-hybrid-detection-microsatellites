@@ -1,2 +1,11 @@
+K=1
+5/5				LnProb mean: -60740.320				Mean similarity score: 1.000
 K=2
-5/5				LnProb mean: -53971.460				Mean similarity score: 1.000
+5/5				LnProb mean: -53733.920				Mean similarity score: 1.000
+K=3
+5/5				LnProb mean: -52777.860				Mean similarity score: 0.998
+K=4
+5/5				LnProb mean: -52656.760				Mean similarity score: 0.988
+K=5
+3/5				LnProb mean: -51883.300				Mean similarity score: 0.786
+2/5				LnProb mean: -52092.200				Mean similarity score: 0.988
